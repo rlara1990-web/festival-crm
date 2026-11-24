@@ -1,5 +1,22 @@
 # Registro de cambios
 
+## 2026-11-24 (modelo v2)
+
+### Cambiado
+- Pipeline nuevo: por contactar, esperando respuesta, recontacto 1 y 2, sin respuesta, en conversación,
+  reunión agendada, convocatoria enviada, aceptado, rechazado, descartado.
+- Ediciones: se quitan ventas, resultado y margen (viven en el ERP); se añaden experiencia, comentario de
+  experiencia, contador y fecha de recontacto.
+- Puntuación con siete factores: experiencia 30, género 20, público 15, acampada 10, duración 10, tipo 10, aforo 5.
+  Solo se puntúa la edición objetivo (2027), con la experiencia más reciente.
+- Textos generados por la importación, en inglés (la interfaz será en inglés).
+
+### Añadido
+- Festivales: acampada y "parecido a". Contactos: contacto principal. Interacciones: reuniones, hilo de Outlook y origen.
+- Tablas nuevas: comentarios, propuestas, documentos (con bucket privado de Storage), solicitudes y ajustes.
+- Experiencias 2026 dadas por Rodrigo (Waking Life, Paredes de Coura, NOS Primavera Sound, RFM Somnii, Vilar de Mouros)
+  y Basilar (rechazado, parecido a Waking Life).
+
 ## 2026-11-24
 
 ### Añadido

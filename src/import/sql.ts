@@ -2,10 +2,16 @@
 import type { ResultadoImportacion } from './importar.ts';
 import type { PuntuacionConfig } from '../scoring/score.ts';
 
-type Valor = string | number | boolean | null | undefined | string[] | object;
+/** SQL literal ya formado (p. ej. un array tipado). */
+export class Crudo { readonly sql: string; constructor(sql: string) { this.sql = sql; } }
+export const uuidArray = (ids: string[]) =>
+  new Crudo(ids.length ? `array[${ids.map((i) => lit(i)).join(', ')}]::uuid[]` : `'{}'::uuid[]`);
+
+type Valor = string | number | boolean | null | undefined | string[] | object | Crudo;
 
 export function lit(v: Valor): string {
   if (v === null || v === undefined) return 'null';
+  if (v instanceof Crudo) return v.sql;
   if (typeof v === 'number') return Number.isFinite(v) ? String(v) : 'null';
   if (typeof v === 'boolean') return v ? 'true' : 'false';
   if (Array.isArray(v) && v.some((x) => typeof x !== 'string')) return `${lit(JSON.stringify(v))}::jsonb`;
@@ -20,8 +26,36 @@ function inserts<T extends object>(tabla: string, filas: T[], columnas: (keyof T
   return `insert into ${tabla} (${columnas.join(', ')}) values\n${valores};\n`;
 }
 
+export const AJUSTES_INICIALES: { clave: string; valor: unknown; descripcion: string }[] = [
+  {
+    clave: 'mensaje_base',
+    valor: {
+      puntos: [
+        'Introduce Moche Verde: Peruvian-inspired food at music festivals in Portugal and Spain.',
+        'Explain the concept and the food we serve.',
+        'We deliver a high-quality product.',
+        'We do not make customers wait: they want to make the most of their time watching their favourite artists, without compromising on good service.',
+      ],
+      incluir: ['web', 'instagram', 'telefono'],
+    },
+    descripcion: 'Key points for outreach emails. Claude writes a personalised email per festival from these.',
+  },
+  {
+    clave: 'contacto_moche_verde',
+    valor: { web: 'mocheverde.com', instagram: '@moche.verde', telefono: '+351 916 273 966' },
+    descripcion: "Contact details included in emails. Phone is Rodrigo's (Portuguese speaker).",
+  },
+  { clave: 'dias_recontacto', valor: 2, descripcion: 'Business days (Mon–Fri) without a reply before the next follow-up.' },
+  {
+    clave: 'revisiones_outlook',
+    valor: { zona_horaria: 'Europe/Lisbon', horas: ['10:00', '15:00', '18:00'] },
+    descripcion: 'When Claude checks the Outlook mailbox and processes requests.',
+  },
+];
+
 export function generarSql(r: ResultadoImportacion, cfg: PuntuacionConfig, ahora: string): string {
   const ediciones = r.ediciones.map((e) => ({ ...e, puntuacion_calculada_en: e.puntuacion_detalle ? ahora : null }));
+  const festivales = r.festivales.map((f) => ({ ...f, parecido_a: uuidArray(f.parecido_a) }));
   return [
     '-- Carga inicial generada por scripts/generar-seed.ts. No editar a mano: regenerar.',
     `-- Generado: ${ahora}`,
@@ -30,19 +64,23 @@ export function generarSql(r: ResultadoImportacion, cfg: PuntuacionConfig, ahora
     // El estado final de cada edición ya viene calculado; no dejamos que el trigger lo reescriba
     'alter table interacciones disable trigger interacciones_estado;',
     '',
-    inserts('puntuacion_config', [{ activa: true, ...cfg, notas: 'Valores iniciales propuestos; afinar con Rodrigo.' }],
-      ['activa', 'pesos', 'afinidad_genero', 'afinidad_publico', 'afinidad_tipo', 'tramos_aforo', 'notas']),
-    inserts('festivales', r.festivales, ['id', 'nombre', 'pais', 'tipo', 'generos', 'perfil_publico', 'notas_publico',
-      'web_url', 'formulario_contacto_url', 'idioma_correo', 'fuera_de_alcance', 'campos_pendientes', 'notas']),
+    inserts('puntuacion_config', [{ activa: true, ...cfg, notas: 'Agreed with Rodrigo on 24/11/2026.' }],
+      ['activa', 'pesos', 'afinidad_experiencia', 'afinidad_genero', 'afinidad_publico', 'afinidad_tipo',
+        'valores_acampada', 'tramos_duracion', 'tramos_aforo', 'notas']),
+    inserts('ajustes', AJUSTES_INICIALES.map((a) => ({ ...a, valor: new Crudo(`${lit(JSON.stringify(a.valor))}::jsonb`) })), ['clave', 'valor', 'descripcion']),
+    inserts('festivales', festivales, ['id', 'nombre', 'pais', 'tipo', 'generos', 'perfil_publico', 'notas_publico',
+      'web_url', 'formulario_contacto_url', 'idioma_correo', 'fuera_de_alcance', 'campos_pendientes', 'notas',
+      'acampada', 'parecido_a']),
     inserts('ediciones', ediciones, ['id', 'festival_id', 'anio', 'fecha_inicio', 'fecha_fin', 'fechas_texto',
       'duracion_dias', 'aforo_min', 'aforo_max', 'estado', 'proxima_accion', 'proxima_accion_fecha', 'conv_apertura',
       'conv_metodo', 'conv_url', 'conv_notas', 'conv_fuente_url', 'conv_revisado_en', 'prioridad_antiguos',
       'acepta_food_trucks', 'puntuacion', 'puntuacion_detalle', 'puntuacion_incompleta', 'puntuacion_calculada_en',
-      'participamos', 'ventas_eur', 'resultado_eur', 'notas_resultados']),
-    inserts('contactos', r.contactos, ['id', 'festival_id', 'email', 'telefono', 'canal_preferido', 'verificar',
-      'motivo_verificar', 'notas']),
+      'experiencia', 'comentario_experiencia']),
+    inserts('contactos', r.contactos, ['id', 'festival_id', 'email', 'telefono', 'canal_preferido', 'principal',
+      'verificar', 'motivo_verificar', 'notas']),
     inserts('interacciones', r.interacciones, ['id', 'festival_id', 'edicion_id', 'contacto_id', 'tipo', 'fecha',
-      'asunto', 'cuerpo', 'estado_resultante']),
+      'asunto', 'cuerpo', 'estado_resultante', 'origen']),
+    inserts('comentarios', r.comentarios, ['id', 'tabla', 'registro_id', 'campo', 'texto', 'autor']),
     inserts('fuentes_dato', r.fuentes.map((f) => ({ ...f, metodo: 'import_csv', obtenido_en: ahora })),
       ['id', 'tabla', 'registro_id', 'campo', 'valor', 'url', 'metodo', 'obtenido_en']),
     'alter table interacciones enable trigger interacciones_estado;',
@@ -58,10 +96,10 @@ export function generarInforme(r: ResultadoImportacion): string {
     '## Avisos', ''];
   for (const a of r.avisos) lineas.push(`- **${a.festival}**: ${a.aviso}`);
   lineas.push('', '## Campos pendientes de revisar (festivales en alcance)', '',
-    'Todos tienen pendiente `ciudad` y `perfil_publico` (no venían en la lista).', '',
+    'Todos tienen pendiente `ciudad` y `acampada`, y casi todos `perfil_publico` (no venían en la lista).', '',
     '| Festival | Pendiente |', '|---|---|');
   for (const f of r.festivales.filter((x) => !x.fuera_de_alcance)) {
-    const otros = f.campos_pendientes.filter((c) => c !== 'ciudad' && c !== 'perfil_publico');
+    const otros = f.campos_pendientes.filter((c) => !['ciudad', 'acampada', 'perfil_publico'].includes(c));
     if (otros.length) lineas.push(`| ${f.nombre} | ${otros.join(', ')} |`);
   }
   lineas.push('', '## Puntuación 2027 (festivales en alcance, de mayor a menor)', '',

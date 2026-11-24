@@ -1,6 +1,6 @@
 # Informe de importación
 
-Festivales: 72 (fuera de alcance: 17). Ediciones: 143. Contactos: 31. Interacciones: 46.
+Festivales: 72 (fuera de alcance: 17). Ediciones: 143. Contactos: 31. Interacciones: 45.
 
 ## Avisos
 
@@ -22,7 +22,6 @@ Festivales: 72 (fuera de alcance: 17). Ediciones: 143. Contactos: 31. Interaccio
 - **Avante Festival**: Sin aforo: pendiente de revisar.
 - **Avante Festival**: Sin género: pendiente de revisar.
 - **Barreiro International Music Festival Out Fest**: Sin aforo: pendiente de revisar.
-- **Basilar**: Sin género: pendiente de revisar.
 - **DHB Portugal**: Sin aforo: pendiente de revisar.
 - **DHB Portugal**: Sin género: pendiente de revisar.
 - **Festival F**: Sin aforo: pendiente de revisar.
@@ -40,7 +39,7 @@ Festivales: 72 (fuera de alcance: 17). Ediciones: 143. Contactos: 31. Interaccio
 
 ## Campos pendientes de revisar (festivales en alcance)
 
-Todos tienen pendiente `ciudad` y `perfil_publico` (no venían en la lista).
+Todos tienen pendiente `ciudad` y `acampada`, y casi todos `perfil_publico` (no venían en la lista).
 
 | Festival | Pendiente |
 |---|---|
@@ -85,7 +84,7 @@ Todos tienen pendiente `ciudad` y `perfil_publico` (no venían en la lista).
 | Afronation | fechas, contacto |
 | Avante Festival | generos, aforo, fechas, web, contacto |
 | Barreiro International Music Festival Out Fest | aforo, fechas, contacto |
-| Basilar | generos, fechas, web |
+| Basilar | fechas, web |
 | DHB Portugal | generos, aforo, fechas, web, contacto |
 | Festival F | aforo, fechas, contacto |
 | Guimarães Jazz | generos, aforo, fechas, web, contacto |
@@ -98,52 +97,52 @@ Todos tienen pendiente `ciudad` y `perfil_publico` (no venían en la lista).
 
 | Festival | Puntuación | Datos incompletos |
 |---|---|---|
-| FMM Sines | 86 | sí |
-| Sintra Festival | 84 | sí |
-| Yard Festival | 81 | sí |
-| Moga Culture | 81 | sí |
-| Waking Life | 81 | sí |
+| Him Dub Festival | 94 | sí |
+| Sintra Festival | 93 | sí |
+| Waking Life | 93 | sí |
+| FMM Sines | 92 | sí |
+| ZNA Gathering | 88 | sí |
+| Transition Festival | 88 | sí |
+| MIL Festival | 86 | sí |
+| Moga Culture | 84 | sí |
+| Suncébeat New Horizons | 84 | sí |
+| Paredes de Coura | 84 | sí |
+| Aquasella Festival | 84 | sí |
+| Arenal Sound | 83 | sí |
+| Basilar | 83 | sí |
+| Medusa Sunbeach Festival | 82 | sí |
 | Neopop | 81 | sí |
-| Aquasella Festival | 81 | sí |
-| Him Dub Festival | 81 | sí |
-| Transition Festival | 81 | sí |
-| Vida Festival | 78 | sí |
-| Benicassim | 78 | sí |
-| Arenal Sound | 78 | sí |
-| Afronation | 78 | sí |
-| Suncébeat New Horizons | 77 | sí |
-| Holika Festival Calahorra | 77 | sí |
-| Elétrico Festival | 77 | sí |
-| ZNA Gathering | 77 | sí |
-| Vinculum | 77 | sí |
-| MIL Festival | 77 | sí |
-| Rototom | 76 | sí |
-| RFM Somnii | 74 | sí |
-| Medusa Sunbeach Festival | 74 | sí |
-| NOS Alive | 73 | sí |
-| Lisb-On | 72 | sí |
-| Insomnia Festival | 72 | sí |
-| NOS Primavera Sound | 71 | sí |
-| Weekend Beach Festival | 70 | sí |
-| Sacred Soul | 70 | sí |
-| Low Festival | 67 | sí |
-| Ebrovision Festival | 67 | sí |
-| Festival F | 67 | sí |
-| Basilar | 64 | sí |
-| Festival Jardins do Marquês | 63 | sí |
-| Bilbao BBK Live | 63 | sí |
-| Paredes de Coura | 60 | sí |
-| Azkena Rock | 58 | sí |
-| Mares Vivas | 58 | sí |
-| North Music Festival | 57 | sí |
-| Sonic Blast | 54 | sí |
-| Rock in Rio | 51 | sí |
-| Vilar de Mouros | 49 | sí |
-| OperaFest | 49 | sí |
-| Resurrection Fest | 46 | sí |
-| Rock Imperium | 46 | sí |
-| Barreiro International Music Festival Out Fest | 46 | sí |
-| Festival Vapor | 36 | sí |
+| Rototom | 81 | sí |
+| NOS Primavera Sound | 80 | sí |
+| Elétrico Festival | 80 | sí |
+| Benicassim | 80 | sí |
+| Vinculum | 80 | sí |
+| Holika Festival Calahorra | 79 | sí |
+| Vida Festival | 79 | sí |
+| NOS Alive | 79 | sí |
+| Sacred Soul | 79 | sí |
+| Festival Jardins do Marquês | 78 | sí |
+| Insomnia Festival | 78 | sí |
+| Yard Festival | 77 | sí |
+| Ebrovision Festival | 76 | sí |
+| Lisb-On | 73 | sí |
+| Weekend Beach Festival | 73 | sí |
+| Afronation | 73 | sí |
+| Festival F | 73 | sí |
+| Low Festival | 72 | sí |
+| North Music Festival | 67 | sí |
+| Bilbao BBK Live | 67 | sí |
+| Rock in Rio | 62 | sí |
+| Azkena Rock | 61 | sí |
+| Mares Vivas | 61 | sí |
+| Sonic Blast | 58 | sí |
+| OperaFest | 57 | sí |
+| Resurrection Fest | 53 | sí |
+| Barreiro International Music Festival Out Fest | 53 | sí |
+| Rock Imperium | 50 | sí |
+| RFM Somnii | 47 | sí |
+| Festival Vapor | 43 | sí |
+| Vilar de Mouros | 36 | sí |
 | Coala Festival | sin datos | sí |
 | Kalorama | sin datos | sí |
 | Avante Festival | sin datos | sí |

@@ -1,11 +1,11 @@
 // Funciones puras de limpieza para la lista original de 2026.
 
 export type Estado =
-  | 'por_contactar' | 'contactado' | 'respondio' | 'interesado' | 'convocatoria_enviada'
-  | 'aceptado' | 'rechazado' | 'sin_respuesta' | 'descartado';
+  | 'por_contactar' | 'esperando_respuesta' | 'recontacto_1' | 'recontacto_2' | 'sin_respuesta'
+  | 'en_conversacion' | 'reunion_agendada' | 'convocatoria_enviada' | 'aceptado' | 'rechazado' | 'descartado';
 
 export type TipoInteraccion =
-  | 'correo_enviado' | 'correo_recibido' | 'mensaje_redes' | 'formulario_web' | 'llamada' | 'nota_interna';
+  | 'correo_enviado' | 'correo_recibido' | 'mensaje_redes' | 'formulario_web' | 'llamada' | 'reunion' | 'nota_interna';
 
 const PAISES: Record<string, string> = {
   portugal: 'PT', spain: 'ES', 'españa': 'ES', 'u.k.': 'GB', uk: 'GB', austria: 'AT', denmark: 'DK',
@@ -57,11 +57,6 @@ export function sumarDias(iso: string, dias: number): string {
   return d.toISOString().slice(0, 10);
 }
 
-const MESES: Record<string, string> = {
-  january: 'enero', february: 'febrero', march: 'marzo', april: 'abril', may: 'mayo', june: 'junio',
-  july: 'julio', august: 'agosto', september: 'septiembre', october: 'octubre', november: 'noviembre', december: 'diciembre',
-};
-
 /** Fechas + duración -> inicio, fin, duración y texto libre cuando no hay fecha exacta. */
 export function parseFechas(rawFechas: string | undefined, rawDuracion: string | undefined) {
   const dur = /^\d+$/.test((rawDuracion ?? '').trim()) ? parseInt(rawDuracion!.trim(), 10) : null;
@@ -76,7 +71,9 @@ export function parseFechas(rawFechas: string | undefined, rawDuracion: string |
     out.fin = finExplicito ?? (dur ? sumarDias(inicio, dur - 1) : null);
     return out;
   }
-  out.texto = s.toLowerCase().replace(/[a-z]+/g, (w) => MESES[w] ?? (w === 'to' ? 'a' : w));
+  // Texto libre (en inglés en la lista original): se capitalizan los meses
+  out.texto = s.toLowerCase().replace(/\b(january|february|march|april|may|june|july|august|september|october|november|december)\b/g,
+    (m) => m[0]!.toUpperCase() + m.slice(1));
   return out;
 }
 
@@ -171,17 +168,17 @@ export function detectarInteracciones(contactado: string, anotacion: string): In
     if (!res.some((r) => r.tipo === tipo)) res.push({ tipo, estado, resumen });
   };
   if (/(application|applied).*(filled|submitted)|(filled|submitted).*application/.test(texto)) {
-    add('formulario_web', 'convocatoria_enviada', 'Solicitud de vendedor enviada por formulario web');
+    add('formulario_web', 'convocatoria_enviada', 'Food vendor application submitted via web form');
   } else if (/form/.test(texto) && /(filled|sent|contacted|contact)/.test(texto)) {
-    add('formulario_web', 'contactado', 'Formulario de contacto enviado en la web');
+    add('formulario_web', 'esperando_respuesta', 'Contact form submitted on the website');
   }
-  if (/(email|e-mail)\s*(sent)|emailed/.test(texto)) add('correo_enviado', 'contactado', 'Correo enviado');
+  if (/(email|e-mail)\s*(sent)|emailed/.test(texto)) add('correo_enviado', 'esperando_respuesta', 'Email sent');
   if (/(instagram|\bdm\b)/.test(texto) && /(sent|contacted|message|dm)/.test(texto) && !/form in instagram/.test(texto)) {
-    add('mensaje_redes', 'contactado', 'Mensaje por Instagram');
+    add('mensaje_redes', 'esperando_respuesta', 'Instagram message sent');
   }
   if (res.length === 0 && /^(contacted|yes)$/.test(contactado.trim().toLowerCase())) {
-    add('nota_interna', 'contactado', 'Contactado (canal no registrado en la lista original)');
+    add('nota_interna', 'esperando_respuesta', 'Contacted (channel not recorded in the original list)');
   }
-  if (/replied/.test(texto)) add('correo_recibido', 'respondio', anotacion.replace(/^replied\s*-\s*/i, '').trim());
+  if (/replied/.test(texto)) add('correo_recibido', 'en_conversacion', `Reply: ${anotacion.replace(/^replied\s*-\s*/i, '').trim()}`);
   return res;
 }

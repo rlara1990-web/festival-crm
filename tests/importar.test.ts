@@ -34,7 +34,7 @@ describe('funciones de limpieza', () => {
   it('fechas', () => {
     expect(parseFechas('09/07/2026', '3')).toMatchObject({ inicio: '2026-07-09', fin: '2026-07-11', duracion: 3 });
     expect(parseFechas('20/06/2026- 27/06/206', '4')).toMatchObject({ inicio: '2026-06-20', fin: '2026-06-27', duracion: 4 });
-    expect(parseFechas('august to september', '?')).toMatchObject({ inicio: null, texto: 'agosto a septiembre', duracion: null });
+    expect(parseFechas('august to september', '?')).toMatchObject({ inicio: null, texto: 'August to September', duracion: null });
     expect(parseFechas('', '')).toMatchObject({ inicio: null, texto: null });
   });
 
@@ -85,10 +85,12 @@ describe('importación del CSV original', () => {
     expect(fest('GOAT Festival').f.campos_pendientes).toContain('pais');
   });
 
-  it('NOS Alive: tres contactos, respondió y prioriza vendedores antiguos', () => {
+  it('NOS Alive: tres contactos sin principal, en conversación y prioriza vendedores antiguos', () => {
     const n = fest('NOS Alive');
     expect(n.contactos.map((c) => c.email).sort()).toEqual(['geral@everythingisnew.pt', 'geral@nosalive.com', 'vendors@nosalive.com']);
-    expect(n.e26!.estado).toBe('respondio');
+    expect(n.contactos.some((c) => c.principal)).toBe(false);
+    expect(r.comentarios.find((c) => c.registro_id === n.f.id && c.campo === 'contactos')!.autor).toBe('claude');
+    expect(n.e26!.estado).toBe('en_conversacion');
     expect(n.e26!.prioridad_antiguos).toBe(true);
     expect(n.e27.prioridad_antiguos).toBe(true);
     expect(n.interacciones.map((i) => i.tipo)).toEqual(['correo_enviado', 'correo_recibido']);
@@ -103,15 +105,41 @@ describe('importación del CSV original', () => {
 
   it('Aquasella: próxima acción en abril de 2027', () => {
     const a = fest('Aquasella Festival');
-    expect(a.e26!.estado).toBe('respondio');
+    expect(a.e26!.estado).toBe('en_conversacion');
     expect(a.e27.proxima_accion_fecha).toBe('2027-04-01');
   });
 
-  it('Vilar de Mouros: participación con pérdidas y puntuación baja', () => {
-    const v = fest('Vilar de Mouros');
-    expect(v.e26).toMatchObject({ estado: 'aceptado', participamos: true, ventas_eur: 4900, resultado_eur: -3100 });
-    expect(v.f.generos).toEqual(['rock', 'punk', 'pop']);
-    expect(v.e27.puntuacion!).toBeLessThan(fest('FMM Sines').e27.puntuacion! - 30);
+  it('experiencias 2026 dadas por Rodrigo, con estado Aceptado', () => {
+    const esperado: Record<string, string> = {
+      'Waking Life': 'muy_positiva', 'Paredes de Coura': 'muy_positiva', 'NOS Primavera Sound': 'positiva',
+      'RFM Somnii': 'muy_negativa', 'Vilar de Mouros': 'muy_negativa',
+    };
+    for (const [nombre, exp] of Object.entries(esperado)) {
+      expect(fest(nombre).e26).toMatchObject({ estado: 'aceptado', experiencia: exp });
+    }
+    expect(r.ediciones.filter((e) => e.experiencia)).toHaveLength(5);
+    expect(r.ediciones.filter((e) => e.estado === 'aceptado')).toHaveLength(5);
+    expect(fest('RFM Somnii').e26!.comentario_experiencia).toMatch(/beach/);
+  });
+
+  it('la experiencia ordena la puntuación 2027 como espera Rodrigo', () => {
+    const p = (n: string) => fest(n).e27.puntuacion!;
+    expect(p('Waking Life')).toBeGreaterThan(p('NOS Primavera Sound'));
+    expect(p('Paredes de Coura')).toBeGreaterThan(p('NOS Primavera Sound'));
+    expect(p('NOS Primavera Sound')).toBeGreaterThan(p('RFM Somnii'));
+    expect(p('Vilar de Mouros')).toBeLessThan(p('RFM Somnii') + 5);
+    // Paredes 84 vs Vilar 36 con los pesos acordados (ver CHANGELOG)
+    expect(p('Paredes de Coura') - p('Vilar de Mouros')).toBeGreaterThan(40);
+  });
+
+  it('Basilar: rechazado en 2026 con motivo como comentario, internacional y parecido a Waking Life', () => {
+    const b = fest('Basilar');
+    expect(b.e26!.estado).toBe('rechazado');
+    expect(b.f).toMatchObject({ generos: ['electronica'], perfil_publico: ['turista_internacional'] });
+    expect(b.f.parecido_a).toEqual([fest('Waking Life').f.id]);
+    const c = r.comentarios.find((x) => x.registro_id === b.e26!.id && x.campo === 'estado')!;
+    expect(c).toMatchObject({ tabla: 'ediciones', autor: 'equipo' });
+    expect(c.texto).toMatch(/menu/);
   });
 
   it('Boom: solicitud enviada el 5/11/2026, decisión en febrero', () => {
@@ -143,13 +171,29 @@ describe('importación del CSV original', () => {
 
   it('no inventa datos: los que faltan quedan pendientes y sin puntuación', () => {
     const avante = fest('Avante Festival');
-    expect(avante.f.campos_pendientes).toEqual(expect.arrayContaining(['generos', 'aforo', 'fechas', 'contacto']));
+    expect(avante.f.campos_pendientes).toEqual(expect.arrayContaining(['generos', 'aforo', 'fechas', 'contacto', 'acampada']));
     expect(avante.e27.puntuacion).toBeNull();
-    expect(r.festivales.every((f) => f.campos_pendientes.includes('perfil_publico'))).toBe(true);
+    expect(r.festivales.filter((f) => !f.campos_pendientes.includes('perfil_publico')).map((f) => f.nombre)).toEqual(['Basilar']);
+    expect(r.festivales.every((f) => f.acampada === null)).toBe(true);
+  });
+
+  it('solo puntúa la edición 2027; 2026 es historial', () => {
+    expect(r.ediciones.filter((e) => e.anio === 2026).every((e) => e.puntuacion === null)).toBe(true);
+  });
+
+  it('los textos visibles generados están en inglés', () => {
+    const textos = [
+      ...r.interacciones.map((i) => i.cuerpo ?? ''), ...r.festivales.map((f) => f.notas ?? ''),
+      ...r.ediciones.map((e) => `${e.fechas_texto ?? ''} ${e.conv_notas ?? ''} ${e.proxima_accion ?? ''}`),
+      ...r.comentarios.map((c) => c.texto), ...r.contactos.map((c) => c.motivo_verificar ?? ''),
+    ].join(' ');
+    expect(textos).not.toMatch(/Importado|Correo enviado|Anotación|Por confirmar|Contactado|aparece también/);
+    expect(fest('Lisb-On').e27.fechas_texto).toBe('TBC (2026: 03/06–04/06)');
   });
 
   it('la temporada 2026 contactada sin respuesta queda como sin_respuesta', () => {
     expect(fest('Lisb-On').e26!.estado).toBe('sin_respuesta');
+    expect(r.interacciones.find((i) => i.festival_id === fest('Lisb-On').f.id)!).toMatchObject({ estado_resultante: 'esperando_respuesta', origen: 'import_csv' });
     expect(fest('Copenhell').e26!.estado).toBe('por_contactar');
   });
 
