@@ -5,12 +5,25 @@
   "scripts": {
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
-    "seed": "node scripts/generar-seed.ts"
+    "seed": "node scripts/generar-seed.ts",
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "demo-data": "node scripts/generar-demo.ts"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
     "csv-parse": "^5.6.0",
     "typescript": "^5.8.3",
+    "vite": "^6.4.6",
     "vitest": "^3.2.4"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }

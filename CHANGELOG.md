@@ -1,5 +1,19 @@
 # Registro de cambios
 
+## 2026-11-24 (web, etapa 1b)
+
+### Añadido
+- Aplicación web en inglés (`web/`, React + Vite, hosting estático): login, lista de festivales y ficha.
+- Lista: búsqueda, orden por cualquier columna y filtros (país, estado, género, público, tipo, acampada,
+  experiencia, puntuación mínima, ocultar "sin food trucks", mostrar fuera de alcance). Recuerda los filtros.
+- Ficha: temporada objetivo (estado, próxima acción, fechas, aforo, convocatoria), datos del festival,
+  puntuación con desglose y cobertura, temporadas pasadas con experiencia, contactos (principal, alta, baja,
+  verificar) e historial (registrar actividad, cambio de estado con motivo).
+- Al guardar se recalculan la puntuación y los campos pendientes (`web/src/data/recalcular.ts`,
+  `src/shared/pendientes.ts` con pruebas).
+- Comentarios existentes visibles como marca con tooltip (crear comentarios: etapa 1c).
+- Modo demo solo en desarrollo (`npm run demo-data`, luego `npm run dev` y abrir `/?demo`); no se publica.
+
 ## 2026-11-24 (modelo v2)
 
 ### Cambiado

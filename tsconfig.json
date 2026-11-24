@@ -9,7 +9,23 @@
     "erasableSyntaxOnly": true,
     "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": [
+      "node",
+      "vite/client"
+    ],
+    "jsx": "react-jsx",
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ]
   },
-  "include": ["src", "scripts", "tests"]
+  "include": [
+    "src",
+    "scripts",
+    "tests",
+    "web/src",
+    "vite.config.ts",
+    "vitest.config.ts"
+  ]
 }

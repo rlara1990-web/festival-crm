@@ -102,6 +102,13 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Datos faltantes: quedan como "pendiente de revisar", nunca inventados.
 - Correcciones por festival documentadas en `src/import/overrides.ts` (NOS Alive, Him Dub, Aquasella, Vilar de Mouros, etc.).
 
+## Código
+- `src/scoring/`: puntuación (compartida por la importación y la web). `src/shared/`: lógica compartida (campos pendientes).
+- `src/import/` y `scripts/generar-seed.ts`: importación del CSV y carga inicial.
+- `web/`: aplicación (React + Vite). `npm run dev` para desarrollo; `npm run build` genera `dist/` para Cloudflare Pages.
+  Modo demo local sin Supabase: `npm run demo-data` y abrir `http://127.0.0.1:5173/?demo`.
+- Pruebas: `npm test`. Tipos: `npm run typecheck`.
+
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.
 2. Completar datos: Claude propone los datos que faltan con fuentes.
