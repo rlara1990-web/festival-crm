@@ -3,6 +3,8 @@
 ## 2026-11-24 (publicación)
 
 ### Añadido
+- Solo el usuario info@mocheverde.com puede leer o escribir datos (`supabase/migrations/20261124000005_solo_equipo.sql`,
+  función `es_equipo()`), además de tener desactivado el registro de usuarios en Supabase.
 - Publicación automática en GitHub Pages (`.github/workflows/publicar.yml`): al cambiar `main` se ejecutan las
   pruebas, se compila la web y se publica en crm.mocheverde.com (`web/public/CNAME`).
 
