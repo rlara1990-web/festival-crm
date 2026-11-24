@@ -7,7 +7,14 @@ Herramienta interna de Moche Verde (comida peruana inspirada, vendida en festiva
 3. Preparar correos personalizados para postular como vendedor de comida.
 4. Completar datos que faltan y proponer festivales y eventos nuevos (Claude, con aprobación).
 
-Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cuenta de Outlook de Moche Verde. Idioma de la interfaz: español. Los correos a organizadores pueden ser en español, portugués o inglés según el país.
+Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cuenta de Outlook de Moche Verde.
+
+Idiomas:
+- Interfaz del CRM: todo en inglés (Zac no habla español ni portugués).
+- Textos generados por el sistema o por Claude que se ven en la interfaz (notas importadas, resúmenes de interacciones, comentarios, propuestas): en inglés.
+- Base de datos: nombres de tablas y columnas en español (ya creadas); la interfaz traduce etiquetas y valores.
+- Conversación con Rodrigo y documentación del repositorio: español.
+- Correos a organizadores: español, portugués o inglés según el país.
 
 ## Decisiones ya tomadas
 - Aplicación web con base de datos en Supabase, proyecto `festival-crm` (ref `mabgenlzxpefappjlmgd`, eu-west-1), separado del ERP.
