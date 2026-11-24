@@ -64,7 +64,8 @@ export interface Edicion {
 
 export interface Contacto {
   id: string;
-  festival_id: string;
+  festival_id: string | null;
+  organizacion_id: string | null;
   nombre: string | null;
   rol: string | null;
   email: string | null;
@@ -80,7 +81,8 @@ export interface Contacto {
 
 export interface Interaccion {
   id: string;
-  festival_id: string;
+  festival_id: string | null;
+  organizacion_id: string | null;
   edicion_id: string | null;
   contacto_id: string | null;
   tipo: string;
@@ -90,6 +92,22 @@ export interface Interaccion {
   estado_resultante: Estado | null;
   origen: string;
   creado_en: string;
+}
+
+export interface Organizacion {
+  id: string;
+  nombre: string;
+  tipo: string;
+  web_url: string | null;
+  notas: string | null;
+}
+
+/** Qué organización cumple qué rol en un festival */
+export interface Vinculo {
+  festival_id: string;
+  organizacion_id: string;
+  rol: string;
+  notas: string | null;
 }
 
 export interface Comentario {

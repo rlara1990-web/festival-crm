@@ -1,6 +1,8 @@
 // Capa de datos. Hay dos implementaciones: Supabase (real) y demo (solo en desarrollo).
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion } from '../types.ts';
+import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
+
+export interface Filtro { festival_id?: string; organizacion_id?: string }
 
 export interface Api {
   /** Sesión */
@@ -11,8 +13,10 @@ export interface Api {
   /** Lecturas */
   festivales(): Promise<Festival[]>;
   ediciones(festivalId?: string): Promise<Edicion[]>;
-  contactos(festivalId?: string): Promise<Contacto[]>;
-  interacciones(festivalId: string): Promise<Interaccion[]>;
+  contactos(filtro?: Filtro): Promise<Contacto[]>;
+  interacciones(filtro: Filtro): Promise<Interaccion[]>;
+  organizaciones(): Promise<Organizacion[]>;
+  vinculos(filtro?: Filtro): Promise<Vinculo[]>;
   comentarios(registroIds: string[]): Promise<Comentario[]>;
   config(): Promise<PuntuacionConfig>;
 
@@ -23,6 +27,10 @@ export interface Api {
   crearInteraccion(fila: Omit<Interaccion, 'id' | 'creado_en'>): Promise<void>;
   crearContacto(fila: Omit<Contacto, 'id'>): Promise<void>;
   actualizarContacto(id: string, cambios: Partial<Contacto>): Promise<void>;
+  crearOrganizacion(fila: Omit<Organizacion, 'id'>): Promise<string>;
+  actualizarOrganizacion(id: string, cambios: Partial<Organizacion>): Promise<void>;
+  crearVinculo(fila: Vinculo): Promise<void>;
+  borrarVinculo(fila: Pick<Vinculo, 'festival_id' | 'organizacion_id' | 'rol'>): Promise<void>;
 }
 
 let actual: Api | null = null;

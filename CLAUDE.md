@@ -58,7 +58,7 @@ Descartado: decisión nuestra, en cualquier momento.
 Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta = nos ignoraron.
 
 ## Modelo de datos
-Fuente de verdad: `supabase/migrations/` (tres migraciones del 24/11/2026, aplicadas en Supabase). Lo marcado **(v2)** ya está implementado en la base; falta la interfaz.
+Fuente de verdad: `supabase/migrations/` (cuatro migraciones del 24/11/2026, aplicadas en Supabase). Lo marcado **(v2)** ya está implementado en la base; falta la interfaz.
 Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones, 2 comentarios, 72 fuentes. La carga se niega a ejecutarse si ya hay festivales.
 
 - `festivales`: nombre, país ISO, ciudad, tipo, géneros, perfil de público, web, formulario de contacto, redes, idioma de correo, `fuera_de_alcance`, `campos_pendientes`, notas. **(v2)** `acampada` (sí / no / desconocido), `parecido_a` (lista de festivales, solo referencia, no puntúa).
@@ -70,6 +70,7 @@ Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 1
 - **(v2)** `documentos`: repositorio de archivos (dossier, menús, fotos) en Supabase Storage, general o ligado a un festival.
 - **(v2)** `solicitudes`: pedidos a Claude hechos desde el CRM (botón "Pedir a Claude": completar datos, preparar correo o recontacto). Claude los procesa en la siguiente revisión; para algo inmediato se le pide en una conversación.
 - **(v2)** `ajustes`: mensaje base de correo, web/Instagram/teléfono de Moche Verde, días de recontacto (2 hábiles).
+- `organizaciones` y `festival_organizacion` (24/11/2026): empresas que gestionan la comida de varios festivales (p. ej. la misma para Paredes de Coura y NOS Primavera Sound), productoras o agencias, vinculadas a festivales con un rol (`gestion_comida`, `productora`, `otro`). Contactos e interacciones pueden ser de un festival o de una organización; una interacción de la organización puede referirse a un festival y cambiar el estado de su edición. Si un festival tiene gestora de comida, la ficha indica que se contacta a través de ella.
 - `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). Cálculo en `src/scoring/score.ts`.
 - `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
 

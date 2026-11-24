@@ -55,6 +55,15 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--verde-claro
   padding: 10px 20px; background: #fff; border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 5;
 }
 .marca { font-weight: 700; color: var(--verde); font-size: 16px; }
+.barra-izq { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.barra-izq nav { display: flex; gap: 4px; }
+.barra-izq nav a { padding: 4px 10px; border-radius: 6px; color: var(--tenue); }
+.barra-izq nav a.activo { background: var(--verde-claro); color: var(--verde); font-weight: 600; }
+.via { font-size: 12px; }
+.lista-simple { list-style: none; padding: 0; margin: 0 0 8px; }
+.lista-simple li { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 6px 0; border-bottom: 1px solid var(--borde); }
+.lista-simple li:last-child { border-bottom: 0; }
+.tarjeta.form { margin-bottom: 12px; }
 .marca span { font-weight: 400; color: var(--tenue); margin-left: 6px; }
 .barra-der { display: flex; gap: 12px; align-items: center; }
 main { padding: 20px; max-width: 1400px; margin: 0 auto; }

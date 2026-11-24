@@ -5,9 +5,14 @@ import { calcularPendientes } from '../../../src/shared/pendientes.ts';
 import type { Api } from './api.ts';
 
 export async function recalcularFestival(api: Api, festivalId: string): Promise<void> {
-  const [festivales, ediciones, contactos, cfg] = await Promise.all([
-    api.festivales(), api.ediciones(festivalId), api.contactos(festivalId), api.config(),
+  const [festivales, ediciones, contactos, vinculos, cfg] = await Promise.all([
+    api.festivales(), api.ediciones(festivalId), api.contactos({ festival_id: festivalId }), api.vinculos({ festival_id: festivalId }), api.config(),
   ]);
+  // Si la comida la gestiona una organización con contacto, el festival ya tiene a quién escribir
+  const gestoras = vinculos.filter((v) => v.rol === 'gestion_comida').map((v) => v.organizacion_id);
+  const contactosGestoras = gestoras.length
+    ? (await Promise.all(gestoras.map((o) => api.contactos({ organizacion_id: o })))).flat()
+    : [];
   const f = festivales.find((x) => x.id === festivalId);
   if (!f || ediciones.length === 0) return;
   const ordenadas = [...ediciones].sort((a, b) => a.anio - b.anio);
@@ -26,7 +31,7 @@ export async function recalcularFestival(api: Api, festivalId: string): Promise<
   const pendientes = calcularPendientes({
     pais: f.pais, ciudad: f.ciudad, generos: f.generos, perfil_publico: f.perfil_publico, acampada: f.acampada,
     web_url: f.web_url, formulario_contacto_url: f.formulario_contacto_url,
-    tieneEmail: contactos.some((c) => c.email && !c.baja_en),
+    tieneEmail: [...contactos, ...contactosGestoras].some((c) => c.email && !c.baja_en),
     aforo_min: objetivo.aforo_min, aforo_max: objetivo.aforo_max, fecha_inicio: objetivo.fecha_inicio,
   });
   if (pendientes.join() !== f.campos_pendientes.join()) await api.actualizarFestival(f.id, { campos_pendientes: pendientes });

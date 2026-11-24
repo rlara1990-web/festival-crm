@@ -1,5 +1,16 @@
 # Registro de cambios
 
+## 2026-11-24 (organizaciones)
+
+### Añadido
+- Organizaciones (`supabase/migrations/20261124000004_organizaciones.sql`): empresas que gestionan la comida de
+  varios festivales, productoras o agencias, vinculadas a festivales con un rol. Contactos e interacciones
+  pueden pertenecer a una organización. Motivo: la misma empresa gestiona la comida de Paredes de Coura y
+  NOS Primavera Sound y ofrece postulaciones a distintos eventos.
+- Web: pestaña Organisations (lista y ficha con festivales, contactos e historial), sección Organisations en la
+  ficha del festival, "Who to contact" indica la gestora, filtro por organización en la lista.
+- Las piezas comunes de la interfaz pasan a `web/src/components/`.
+
 ## 2026-11-24 (web, etapa 1b)
 
 ### Añadido

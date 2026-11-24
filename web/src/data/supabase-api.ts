@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
-import type { Api } from './api.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion } from '../types.ts';
+import type { Api, Filtro } from './api.ts';
+import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
 
 // Clave publicable: pensada para el navegador. La seguridad la dan las políticas RLS
 // (solo usuarios autenticados pueden leer o escribir).
@@ -35,14 +35,26 @@ export function crearApiSupabase(): Api {
       if (festivalId) q = q.eq('festival_id', festivalId);
       return comprobar(await q) as Edicion[];
     },
-    async contactos(festivalId) {
+    async contactos(filtro?: Filtro) {
       let q = db.from('contactos').select('*').order('creado_en');
-      if (festivalId) q = q.eq('festival_id', festivalId);
+      if (filtro?.festival_id) q = q.eq('festival_id', filtro.festival_id);
+      if (filtro?.organizacion_id) q = q.eq('organizacion_id', filtro.organizacion_id);
       return comprobar(await q) as Contacto[];
     },
-    async interacciones(festivalId) {
-      return comprobar(await db.from('interacciones').select('*').eq('festival_id', festivalId)
-        .order('fecha', { ascending: false, nullsFirst: false }).order('creado_en', { ascending: false })) as Interaccion[];
+    async interacciones(filtro: Filtro) {
+      let q = db.from('interacciones').select('*');
+      if (filtro.festival_id) q = q.eq('festival_id', filtro.festival_id);
+      if (filtro.organizacion_id) q = q.eq('organizacion_id', filtro.organizacion_id);
+      return comprobar(await q.order('fecha', { ascending: false, nullsFirst: false }).order('creado_en', { ascending: false })) as Interaccion[];
+    },
+    async organizaciones() {
+      return comprobar(await db.from('organizaciones').select('*').order('nombre')) as Organizacion[];
+    },
+    async vinculos(filtro?: Filtro) {
+      let q = db.from('festival_organizacion').select('*');
+      if (filtro?.festival_id) q = q.eq('festival_id', filtro.festival_id);
+      if (filtro?.organizacion_id) q = q.eq('organizacion_id', filtro.organizacion_id);
+      return comprobar(await q) as Vinculo[];
     },
     async comentarios(registroIds) {
       if (registroIds.length === 0) return [];
@@ -66,6 +78,20 @@ export function crearApiSupabase(): Api {
     },
     async actualizarContacto(id, cambios) {
       comprobar(await db.from('contactos').update(cambios).eq('id', id));
+    },
+    async crearOrganizacion(fila) {
+      const r = comprobar(await db.from('organizaciones').insert(fila).select('id').single()) as { id: string };
+      return r.id;
+    },
+    async actualizarOrganizacion(id, cambios) {
+      comprobar(await db.from('organizaciones').update(cambios).eq('id', id));
+    },
+    async crearVinculo(fila) {
+      comprobar(await db.from('festival_organizacion').insert(fila));
+    },
+    async borrarVinculo(f) {
+      comprobar(await db.from('festival_organizacion').delete()
+        .eq('festival_id', f.festival_id).eq('organizacion_id', f.organizacion_id).eq('rol', f.rol));
     },
   };
 }

@@ -87,6 +87,14 @@ export const PENDIENTES: Record<string, string> = {
   aforo: 'Capacity', fechas: 'Dates', web: 'Website', contacto: 'Contact',
 };
 
+export const TIPOS_ORG: Record<string, string> = {
+  gestora_comida: 'Food vendor manager', productora: 'Promoter / producer', agencia: 'Agency', otro: 'Other',
+};
+
+export const ROLES_ORG: Record<string, string> = {
+  gestion_comida: 'Manages food vendors', productora: 'Promoter / producer', otro: 'Other',
+};
+
 export const label = (tabla: Record<string, string>, k: string | null | undefined) =>
   k == null ? '—' : tabla[k] ?? k;
 

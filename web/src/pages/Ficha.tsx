@@ -1,12 +1,17 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { Api } from '../data/api.ts';
 import { recalcularFestival } from '../data/recalcular.ts';
-import type { Comentario, Contacto, Edicion, Estado, Experiencia, Festival, Interaccion } from '../types.ts';
+import type { Comentario, Contacto, Edicion, Estado, Experiencia, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
 import {
-  CANALES, COSTES, ESTADOS, ESTADO_AYUDA, EXPERIENCIAS, FACTORES, GENEROS, IDIOMAS, METODOS_CONV, ORIGENES, PAISES,
-  PENDIENTES, PUBLICOS, TIPOS, TIPOS_INTERACCION, aforoTexto, fechaTexto, label, siNo,
+  COSTES, ESTADOS, ESTADO_AYUDA, EXPERIENCIAS, FACTORES, GENEROS, IDIOMAS, METODOS_CONV, PAISES,
+  PENDIENTES, PUBLICOS, ROLES_ORG, TIPOS, TIPOS_ORG, aforoTexto, fechaTexto, label, siNo,
 } from '../labels.ts';
 import { Puntuacion } from './Lista.tsx';
+import {
+  Comentarios, Dato, Enlace, Multiples, Opciones, Seccion, TRI, deTri, num, triEstado, vacio, type Coms, type Guardar,
+} from '../components/ui.tsx';
+import { SeccionContactos } from '../components/Contactos.tsx';
+import { SeccionHistorial } from '../components/Historial.tsx';
 
 interface Datos {
   f: Festival;
@@ -15,6 +20,10 @@ interface Datos {
   contactos: Contacto[];
   interacciones: Interaccion[];
   comentarios: Comentario[];
+  organizaciones: Organizacion[];
+  vinculos: Vinculo[];
+  /** Contactos de las organizaciones vinculadas */
+  contactosOrg: Contacto[];
 }
 
 export function Ficha({ api, id }: { api: Api; id: string }) {
@@ -23,13 +32,16 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
   const [aviso, setAviso] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [todos, ediciones, contactos, interacciones] = await Promise.all([
-      api.festivales(), api.ediciones(id), api.contactos(id), api.interacciones(id),
+    const [todos, ediciones, contactos, interacciones, organizaciones, vinculos] = await Promise.all([
+      api.festivales(), api.ediciones(id), api.contactos({ festival_id: id }), api.interacciones({ festival_id: id }),
+      api.organizaciones(), api.vinculos({ festival_id: id }),
     ]);
     const f = todos.find((x) => x.id === id);
     if (!f) throw new Error('Festival not found');
+    const orgIds = [...new Set(vinculos.map((v) => v.organizacion_id))];
+    const contactosOrg = (await Promise.all(orgIds.map((o) => api.contactos({ organizacion_id: o })))).flat();
     const comentarios = await api.comentarios([id, ...ediciones.map((e) => e.id), ...contactos.map((c) => c.id)]);
-    setD({ f, todos, ediciones, contactos, interacciones, comentarios });
+    setD({ f, todos, ediciones, contactos, interacciones, comentarios, organizaciones, vinculos, contactosOrg });
   }, [api, id]);
 
   useEffect(() => { cargar().catch((e: Error) => setError(e.message)); }, [cargar]);
@@ -54,6 +66,10 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
   const ordenadas = [...d.ediciones].sort((a, b) => a.anio - b.anio);
   const objetivo = ordenadas[ordenadas.length - 1];
   const pasadas = ordenadas.slice(0, -1).reverse();
+  // Organización que gestiona la comida (si hay) y su contacto principal
+  const vGestora = d.vinculos.find((v) => v.rol === 'gestion_comida');
+  const orgGestora = vGestora ? d.organizaciones.find((o) => o.id === vGestora.organizacion_id) : undefined;
+  const gestora = orgGestora ? { org: orgGestora, contacto: d.contactosOrg.find((c) => c.organizacion_id === orgGestora.id && c.principal && !c.baja_en) } : undefined;
   const coms = (registro: string, campo: string | null) =>
     d.comentarios.filter((c) => c.registro_id === registro && c.campo === campo && !c.resuelto);
 
@@ -76,10 +92,13 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
 
       <div className="columnas">
         <div>
-          {objetivo && <SeccionTemporada e={objetivo} f={d.f} contactos={d.contactos} guardar={guardar} api={api} coms={coms} />}
+          {objetivo && <SeccionTemporada e={objetivo} f={d.f} contactos={d.contactos} gestora={gestora} guardar={guardar} api={api} coms={coms} />}
+          <SeccionOrganizaciones f={d.f} organizaciones={d.organizaciones} vinculos={d.vinculos} contactosOrg={d.contactosOrg} guardar={guardar} api={api} />
           <SeccionFestival f={d.f} todos={d.todos} guardar={guardar} api={api} coms={coms} />
-          <SeccionContactos f={d.f} contactos={d.contactos} guardar={guardar} api={api} coms={coms} />
-          <SeccionHistorial f={d.f} objetivo={objetivo} ediciones={ordenadas} contactos={d.contactos} interacciones={d.interacciones} guardar={guardar} api={api} />
+          <SeccionContactos dueno={{ festival_id: d.f.id, organizacion_id: null }} contactos={d.contactos} guardar={guardar} api={api} coms={coms} />
+          <SeccionHistorial festival={d.f} objetivos={objetivo ? { [d.f.id]: objetivo } : {}} ediciones={ordenadas}
+            contactos={[...d.contactos, ...d.contactosOrg]} interacciones={d.interacciones} festivales={d.todos}
+            organizaciones={d.organizaciones} guardar={guardar} api={api} />
         </div>
         <aside>
           {objetivo && <SeccionPuntuacion e={objetivo} />}
@@ -90,93 +109,13 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
   );
 }
 
-type Guardar = (accion: () => Promise<void>, mensaje?: string) => Promise<void>;
-type Coms = (registro: string, campo: string | null) => Comentario[];
-
-// ---------------------------------------------------------------------------
-// Piezas comunes
-// ---------------------------------------------------------------------------
-
-function Seccion({ titulo, editando, setEditando, guardar, children, extra }: {
-  titulo: string; editando?: boolean; setEditando?: (v: boolean) => void; guardar?: () => void;
-  children: ReactNode; extra?: ReactNode;
-}) {
-  return (
-    <section className="tarjeta seccion">
-      <div className="seccion-cab">
-        <h2>{titulo}</h2>
-        <div className="acciones">
-          {extra}
-          {setEditando && !editando && <button className="btn-sec" onClick={() => setEditando(true)}>Edit</button>}
-          {setEditando && editando && <>
-            <button className="btn-sec" onClick={() => setEditando(false)}>Cancel</button>
-            <button onClick={guardar}>Save</button>
-          </>}
-        </div>
-      </div>
-      {children}
-    </section>
-  );
-}
-
-/** Marca de comentario estilo Google Docs: punto visible y texto al pasar el cursor. */
-function Comentarios({ lista }: { lista: Comentario[] }) {
-  if (lista.length === 0) return null;
-  const texto = lista.map((c) => `${c.autor === 'claude' ? 'Claude' : 'Team'}: ${c.texto}`).join('\n\n');
-  return <span className="comentario" title={texto} aria-label={`Comment: ${texto}`}>{lista.length}</span>;
-}
-
-function Dato({ t, children, comentarios }: { t: string; children: ReactNode; comentarios?: Comentario[] }) {
-  return (
-    <div className="dato">
-      <dt>{t}{comentarios && <Comentarios lista={comentarios} />}</dt>
-      <dd>{children}</dd>
-    </div>
-  );
-}
-
-const vacio = (v: string) => (v.trim() === '' ? null : v.trim());
-const num = (v: string) => (v.trim() === '' ? null : Number(v));
-const triEstado = (v: string) => (v === '' ? null : v === 'si');
-const deTri = (v: boolean | null) => (v == null ? '' : v ? 'si' : 'no');
-
-function Enlace({ url }: { url: string | null }) {
-  if (!url) return <>—</>;
-  return <a href={url} target="_blank" rel="noreferrer">{url.replace(/^https?:\/\//, '').replace(/\/$/, '')}</a>;
-}
-
-function Opciones({ valor, cambiar, opciones, vacioTexto = '—' }: {
-  valor: string; cambiar: (v: string) => void; opciones: Record<string, string>; vacioTexto?: string;
-}) {
-  return (
-    <select value={valor} onChange={(e) => cambiar(e.target.value)}>
-      <option value="">{vacioTexto}</option>
-      {Object.entries(opciones).map(([k, t]) => <option key={k} value={k}>{t}</option>)}
-    </select>
-  );
-}
-
-function Multiples({ valores, cambiar, opciones }: { valores: string[]; cambiar: (v: string[]) => void; opciones: Record<string, string> }) {
-  return (
-    <div className="multiples">
-      {Object.entries(opciones).map(([k, t]) => (
-        <label key={k} className="check">
-          <input type="checkbox" checked={valores.includes(k)}
-            onChange={(e) => cambiar(e.target.checked ? [...valores, k] : valores.filter((x) => x !== k))} />{t}
-        </label>
-      ))}
-    </div>
-  );
-}
-
-const TRI = { si: 'Yes', no: 'No' };
-
 // ---------------------------------------------------------------------------
 // Temporada objetivo
 // ---------------------------------------------------------------------------
 
-function SeccionTemporada({ e, f, contactos, guardar, api, coms }: {
-  e: Edicion; f: Festival; contactos: Contacto[]; guardar: Guardar; api: Api; coms: Coms;
+function SeccionTemporada({ e, f, contactos, gestora, guardar, api, coms }: {
+  e: Edicion; f: Festival; contactos: Contacto[]; gestora: { org: Organizacion; contacto: Contacto | undefined } | undefined;
+  guardar: Guardar; api: Api; coms: Coms;
 }) {
   const [editando, setEditando] = useState(false);
   const [b, setB] = useState(() => borradorEdicion(e));
@@ -189,7 +128,7 @@ function SeccionTemporada({ e, f, contactos, guardar, api, coms }: {
   async function cambiarEstado() {
     if (!nuevoEstado) return;
     await guardar(() => api.crearInteraccion({
-      festival_id: f.id, edicion_id: e.id, contacto_id: null, tipo: 'nota_interna', fecha: new Date().toISOString().slice(0, 10),
+      festival_id: f.id, organizacion_id: null, edicion_id: e.id, contacto_id: null, tipo: 'nota_interna', fecha: new Date().toISOString().slice(0, 10),
       asunto: `Status: ${label(ESTADOS, e.estado)} → ${label(ESTADOS, nuevoEstado)}`, cuerpo: vacio(motivo),
       estado_resultante: nuevoEstado as Estado, origen: 'manual',
     }), 'Status updated');
@@ -229,7 +168,9 @@ function SeccionTemporada({ e, f, contactos, guardar, api, coms }: {
       {!editando ? (
         <dl className="datos">
           <Dato t="Next action">{e.proxima_accion ? <>{e.proxima_accion_fecha && <b>{fechaTexto(e.proxima_accion_fecha)} · </b>}{e.proxima_accion}</> : '—'}</Dato>
-          <Dato t="Main contact">{principal ? principal.email ?? principal.telefono : <span className="tenue">Not chosen</span>}</Dato>
+          <Dato t="Who to contact">{gestora
+            ? <>Via <a href={`#/organizacion/${gestora.org.id}`}>{gestora.org.nombre}</a>{gestora.contacto && <>: {gestora.contacto.nombre ? `${gestora.contacto.nombre} · ` : ''}{gestora.contacto.email ?? gestora.contacto.telefono}</>}</>
+            : principal ? principal.email ?? principal.telefono : <span className="tenue">Not chosen</span>}</Dato>
           <Dato t="Dates">{e.fecha_inicio ? `${fechaTexto(e.fecha_inicio)} – ${fechaTexto(e.fecha_fin)}` : e.fechas_texto ?? '—'}</Dato>
           <Dato t="Days">{e.duracion_dias ?? '—'}</Dato>
           <Dato t="Capacity">{aforoTexto(e.aforo_min, e.aforo_max)}</Dato>
@@ -436,131 +377,62 @@ function Pasada({ e, guardar, api, coms }: { e: Edicion; guardar: Guardar; api: 
 }
 
 // ---------------------------------------------------------------------------
-// Contactos
+// Organizaciones vinculadas (gestora de comida, productora…)
 // ---------------------------------------------------------------------------
 
-function SeccionContactos({ f, contactos, guardar, api, coms }: { f: Festival; contactos: Contacto[]; guardar: Guardar; api: Api; coms: Coms }) {
-  const [nuevo, setNuevo] = useState<null | { nombre: string; rol: string; email: string; telefono: string; canal: string }>(null);
-  const hoy = new Date().toISOString().slice(0, 10);
+function SeccionOrganizaciones({ f, organizaciones, vinculos, contactosOrg, guardar, api }: {
+  f: Festival; organizaciones: Organizacion[]; vinculos: Vinculo[]; contactosOrg: Contacto[]; guardar: Guardar; api: Api;
+}) {
+  const [nuevo, setNuevo] = useState<null | { org: string; nombreNueva: string; tipoNueva: string; rol: string }>(null);
 
-  async function hacerPrincipal(c: Contacto) {
+  async function vincular(n: NonNullable<typeof nuevo>) {
     await guardar(async () => {
-      for (const otro of contactos.filter((x) => x.principal && x.id !== c.id)) await api.actualizarContacto(otro.id, { principal: false });
-      await api.actualizarContacto(c.id, { principal: true });
-    }, 'Main contact updated');
+      let orgId = n.org;
+      if (orgId === '__nueva') orgId = await api.crearOrganizacion({ nombre: n.nombreNueva.trim(), tipo: n.tipoNueva, web_url: null, notas: null });
+      await api.crearVinculo({ festival_id: f.id, organizacion_id: orgId, rol: n.rol, notas: null });
+    }, 'Organisation linked');
+    setNuevo(null);
   }
 
   return (
-    <Seccion titulo="Contacts" extra={<Comentarios lista={coms(f.id, 'contactos')} />}>
-      {contactos.length === 0 && <p className="tenue">No contacts yet.</p>}
-      {contactos.length > 0 && (
-        <div className="tabla-scroll sin-marco"><table className="tabla compacta">
-          <thead><tr><th>Main</th><th>Name / role</th><th>Email</th><th>Phone</th><th>Channel</th><th></th></tr></thead>
-          <tbody>
-            {contactos.map((c) => (
-              <tr key={c.id} className={c.baja_en ? 'baja' : ''}>
-                <td><input type="radio" name="principal" checked={c.principal} disabled={!!c.baja_en} onChange={() => hacerPrincipal(c)} /></td>
-                <td>{c.nombre ?? <span className="tenue">Generic inbox</span>}{c.rol && <small className="tenue"> · {c.rol}</small>}</td>
-                <td>{c.email ?? '—'}{c.verificar && <span className="etiqueta aviso" title={c.motivo_verificar ?? ''}>Verify</span>}<Comentarios lista={coms(c.id, 'email')} /></td>
-                <td>{c.telefono ?? '—'}</td>
-                <td>{label(CANALES, c.canal_preferido)}</td>
-                <td>{c.baja_en
-                  ? <span className="tenue">Unsubscribed {fechaTexto(c.baja_en)}</span>
-                  : <button className="btn-sec chico" onClick={() => {
-                      if (confirm(`Mark ${c.email ?? c.telefono} as unsubscribed? We will not contact them again.`)) {
-                        void guardar(() => api.actualizarContacto(c.id, { baja_en: hoy, principal: false }), 'Contact unsubscribed');
-                      }
-                    }}>Unsubscribe</button>}
-                  {c.verificar && <button className="btn-sec chico" onClick={() => guardar(() => api.actualizarContacto(c.id, { verificar: false }), 'Marked as verified')}>Verified</button>}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table></div>
+    <Seccion titulo="Organisations" extra={!nuevo && <button className="btn-sec" onClick={() => setNuevo({ org: '', nombreNueva: '', tipoNueva: 'gestora_comida', rol: 'gestion_comida' })}>Link organisation</button>}>
+      {vinculos.length === 0 && !nuevo && <p className="tenue">No organisation linked. Link one if a company manages food vendors or produces this festival.</p>}
+      {vinculos.length > 0 && (
+        <ul className="lista-simple">
+          {vinculos.map((v) => {
+            const o = organizaciones.find((x) => x.id === v.organizacion_id);
+            const c = contactosOrg.find((x) => x.organizacion_id === v.organizacion_id && x.principal && !x.baja_en);
+            if (!o) return null;
+            return (
+              <li key={`${v.organizacion_id}-${v.rol}`}>
+                <a href={`#/organizacion/${o.id}`}><b>{o.nombre}</b></a> <span className="etiqueta">{label(ROLES_ORG, v.rol)}</span>
+                {c && <span className="tenue"> · {c.nombre ? `${c.nombre} · ` : ''}{c.email ?? c.telefono}</span>}
+                <button className="btn-sec chico" onClick={() => {
+                  if (confirm(`Unlink ${o.nombre} from ${f.nombre}?`)) void guardar(() => api.borrarVinculo(v), 'Organisation unlinked');
+                }}>Unlink</button>
+              </li>
+            );
+          })}
+        </ul>
       )}
-      {!nuevo && <button className="btn-sec" onClick={() => setNuevo({ nombre: '', rol: '', email: '', telefono: '', canal: 'email' })}>Add contact</button>}
       {nuevo && (
         <div className="form">
-          <label>Name<input value={nuevo.nombre} onChange={(x) => setNuevo({ ...nuevo, nombre: x.target.value })} /></label>
-          <label>Role<input value={nuevo.rol} onChange={(x) => setNuevo({ ...nuevo, rol: x.target.value })} /></label>
-          <label>Email<input type="email" value={nuevo.email} onChange={(x) => setNuevo({ ...nuevo, email: x.target.value })} /></label>
-          <label>Phone<input value={nuevo.telefono} onChange={(x) => setNuevo({ ...nuevo, telefono: x.target.value })} /></label>
-          <label>Preferred channel<Opciones valor={nuevo.canal} cambiar={(v) => setNuevo({ ...nuevo, canal: v })} opciones={CANALES} /></label>
-          <div className="ancho acciones">
-            <button className="btn-sec" onClick={() => setNuevo(null)}>Cancel</button>
-            <button disabled={!nuevo.email && !nuevo.telefono} onClick={async () => {
-              await guardar(() => api.crearContacto({
-                festival_id: f.id, nombre: vacio(nuevo.nombre), rol: vacio(nuevo.rol), email: vacio(nuevo.email)?.toLowerCase() ?? null,
-                telefono: vacio(nuevo.telefono), canal_preferido: nuevo.canal || null, primer_contacto_en: null, baja_en: null,
-                verificar: false, motivo_verificar: null, notas: null, principal: !contactos.some((c) => c.principal && !c.baja_en),
-              }), 'Contact added');
-              setNuevo(null);
-            }}>Save contact</button>
-          </div>
-        </div>
-      )}
-    </Seccion>
-  );
-}
-
-// ---------------------------------------------------------------------------
-// Historial
-// ---------------------------------------------------------------------------
-
-function SeccionHistorial({ f, objetivo, ediciones, contactos, interacciones, guardar, api }: {
-  f: Festival; objetivo: Edicion | undefined; ediciones: Edicion[]; contactos: Contacto[]; interacciones: Interaccion[];
-  guardar: Guardar; api: Api;
-}) {
-  const [nuevo, setNuevo] = useState<null | { tipo: string; fecha: string; asunto: string; cuerpo: string; contacto: string; estado: string }>(null);
-  const anioDe = (id: string | null) => ediciones.find((e) => e.id === id)?.anio;
-  const contactoDe = (id: string | null) => contactos.find((c) => c.id === id);
-
-  return (
-    <Seccion titulo="History" extra={!nuevo && <button className="btn-sec" onClick={() => setNuevo({
-      tipo: 'nota_interna', fecha: new Date().toISOString().slice(0, 10), asunto: '', cuerpo: '', contacto: '', estado: '',
-    })}>Log activity</button>}>
-      {nuevo && objetivo && (
-        <div className="form">
-          <label>Type<Opciones valor={nuevo.tipo} cambiar={(v) => setNuevo({ ...nuevo, tipo: v || 'nota_interna' })} opciones={TIPOS_INTERACCION} /></label>
-          <label>Date<input type="date" value={nuevo.fecha} onChange={(x) => setNuevo({ ...nuevo, fecha: x.target.value })} /></label>
-          <label>Contact<select value={nuevo.contacto} onChange={(x) => setNuevo({ ...nuevo, contacto: x.target.value })}>
-            <option value="">—</option>
-            {contactos.filter((c) => !c.baja_en).map((c) => <option key={c.id} value={c.id}>{c.nombre ?? c.email ?? c.telefono}</option>)}
+          <label>Organisation<select value={nuevo.org} onChange={(x) => setNuevo({ ...nuevo, org: x.target.value })}>
+            <option value="">Choose…</option>
+            {organizaciones.map((o) => <option key={o.id} value={o.id}>{o.nombre}</option>)}
+            <option value="__nueva">+ New organisation</option>
           </select></label>
-          <label>New status (optional)<Opciones valor={nuevo.estado} cambiar={(v) => setNuevo({ ...nuevo, estado: v })} opciones={ESTADOS} vacioTexto="Keep current status" /></label>
-          <label className="ancho">Subject<input value={nuevo.asunto} onChange={(x) => setNuevo({ ...nuevo, asunto: x.target.value })} /></label>
-          <label className="ancho">Details<textarea value={nuevo.cuerpo} onChange={(x) => setNuevo({ ...nuevo, cuerpo: x.target.value })} /></label>
+          {nuevo.org === '__nueva' && <>
+            <label>Name<input value={nuevo.nombreNueva} onChange={(x) => setNuevo({ ...nuevo, nombreNueva: x.target.value })} /></label>
+            <label>Type<Opciones valor={nuevo.tipoNueva} cambiar={(v) => setNuevo({ ...nuevo, tipoNueva: v || 'otro' })} opciones={TIPOS_ORG} /></label>
+          </>}
+          <label>Role in this festival<Opciones valor={nuevo.rol} cambiar={(v) => setNuevo({ ...nuevo, rol: v || 'otro' })} opciones={ROLES_ORG} /></label>
           <div className="ancho acciones">
             <button className="btn-sec" onClick={() => setNuevo(null)}>Cancel</button>
-            <button disabled={!nuevo.asunto && !nuevo.cuerpo} onClick={async () => {
-              await guardar(() => api.crearInteraccion({
-                festival_id: f.id, edicion_id: objetivo.id, contacto_id: nuevo.contacto || null, tipo: nuevo.tipo,
-                fecha: vacio(nuevo.fecha), asunto: vacio(nuevo.asunto), cuerpo: vacio(nuevo.cuerpo),
-                estado_resultante: (nuevo.estado || null) as Estado | null, origen: 'manual',
-              }), 'Activity logged');
-              setNuevo(null);
-            }}>Save</button>
+            <button disabled={!nuevo.org || (nuevo.org === '__nueva' && !nuevo.nombreNueva.trim())} onClick={() => vincular(nuevo)}>Link</button>
           </div>
         </div>
       )}
-      {interacciones.length === 0 && <p className="tenue">No activity yet.</p>}
-      <ol className="historial">
-        {interacciones.map((i) => {
-          const c = contactoDe(i.contacto_id);
-          return (
-            <li key={i.id}>
-              <div className="hist-cab">
-                <b>{label(TIPOS_INTERACCION, i.tipo)}</b>
-                <span className="tenue">{i.fecha ? fechaTexto(i.fecha) : 'Date unknown'}{anioDe(i.edicion_id) && ` · season ${anioDe(i.edicion_id)}`} · {label(ORIGENES, i.origen)}</span>
-                {i.estado_resultante && <span className={`estado estado-${i.estado_resultante}`}>→ {label(ESTADOS, i.estado_resultante)}</span>}
-              </div>
-              {i.asunto && <p className="hist-asunto">{i.asunto}</p>}
-              {i.cuerpo && <p className="multilinea">{i.cuerpo}</p>}
-              {c && <p className="tenue">Contact: {c.email ?? c.telefono}</p>}
-            </li>
-          );
-        })}
-      </ol>
     </Seccion>
   );
 }

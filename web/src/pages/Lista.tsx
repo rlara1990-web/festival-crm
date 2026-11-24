@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { Api } from '../data/api.ts';
-import type { Contacto, Edicion, Festival } from '../types.ts';
+import type { Contacto, Edicion, Festival, Organizacion, Vinculo } from '../types.ts';
 import {
   ESTADOS, EXPERIENCIAS, GENEROS, PAISES, PENDIENTES, PUBLICOS, TIPOS, aforoTexto, fechaTexto, label, siNo,
 } from '../labels.ts';
@@ -10,6 +10,7 @@ interface Fila {
   e: Edicion | undefined; // edición objetivo (año más reciente)
   experiencia: string | null; // la más reciente
   email: string | null; // contacto principal
+  orgs: Organizacion[]; // organizaciones vinculadas
 }
 
 type Columna = 'nombre' | 'pais' | 'estado' | 'puntuacion' | 'generos' | 'acampada' | 'duracion' | 'aforo' | 'proxima' | 'experiencia' | 'pendientes';
@@ -23,12 +24,12 @@ const COLUMNAS: { k: Columna; t: string }[] = [
 
 interface Filtros {
   texto: string; pais: string; estado: string; genero: string; publico: string; tipo: string;
-  acampada: string; experiencia: string; minimo: string; sinNoFoodTrucks: boolean; fuera: boolean;
+  acampada: string; experiencia: string; minimo: string; sinNoFoodTrucks: boolean; fuera: boolean; org: string;
 }
 
 const FILTROS_INICIALES: Filtros = {
   texto: '', pais: '', estado: '', genero: '', publico: '', tipo: '', acampada: '', experiencia: '', minimo: '',
-  sinNoFoodTrucks: false, fuera: false,
+  sinNoFoodTrucks: false, fuera: false, org: '',
 };
 
 const CLAVE_LOCAL = 'crm.lista.v1';
@@ -58,14 +59,15 @@ function valorOrden(r: Fila, c: Columna): string | number {
 export function Lista({ api }: { api: Api }) {
   const guardado = leerLocal();
   const [filas, setFilas] = useState<Fila[] | null>(null);
+  const [organizaciones, setOrganizaciones] = useState<Organizacion[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [filtros, setFiltros] = useState<Filtros>({ ...FILTROS_INICIALES, ...guardado?.filtros });
   const [orden, setOrden] = useState<Columna>(guardado?.orden ?? 'puntuacion');
   const [asc, setAsc] = useState<boolean>(guardado?.asc ?? false);
 
   useEffect(() => {
-    Promise.all([api.festivales(), api.ediciones(), api.contactos()])
-      .then(([fs, eds, cs]) => setFilas(fs.map((f) => armarFila(f, eds, cs))))
+    Promise.all([api.festivales(), api.ediciones(), api.contactos(), api.organizaciones(), api.vinculos()])
+      .then(([fs, eds, cs, orgs, vs]) => { setOrganizaciones(orgs); setFilas(fs.map((f) => armarFila(f, eds, cs, orgs, vs))); })
       .catch((e: Error) => setError(e.message));
   }, [api]);
 
@@ -75,7 +77,7 @@ export function Lista({ api }: { api: Api }) {
     if (!filas) return [];
     const t = filtros.texto.trim().toLowerCase();
     const min = filtros.minimo === '' ? null : Number(filtros.minimo);
-    const r = filas.filter(({ f, e, experiencia, email }) =>
+    const r = filas.filter(({ f, e, experiencia, email, orgs }) =>
       (filtros.fuera || !f.fuera_de_alcance) &&
       (!t || f.nombre.toLowerCase().includes(t) || (f.ciudad ?? '').toLowerCase().includes(t) || (email ?? '').includes(t)) &&
       (!filtros.pais || f.pais === filtros.pais) &&
@@ -86,6 +88,7 @@ export function Lista({ api }: { api: Api }) {
       (!filtros.acampada || siNo(f.acampada) === filtros.acampada) &&
       (!filtros.experiencia || experiencia === filtros.experiencia) &&
       (min == null || (e?.puntuacion ?? -1) >= min) &&
+      (!filtros.org || orgs.some((o) => o.id === filtros.org)) &&
       (!filtros.sinNoFoodTrucks || e?.acepta_food_trucks !== false));
     return r.sort((a, b) => {
       const x = valorOrden(a, orden), y = valorOrden(b, orden);
@@ -117,6 +120,7 @@ export function Lista({ api }: { api: Api }) {
         <Selector valor={filtros.tipo} cambiar={(v) => set('tipo', v)} vacio="All event types" opciones={TIPOS} />
         <Selector valor={filtros.acampada} cambiar={(v) => set('acampada', v)} vacio="Camping: any" opciones={{ Yes: 'Camping: yes', No: 'Camping: no', Unknown: 'Camping: unknown' }} />
         <Selector valor={filtros.experiencia} cambiar={(v) => set('experiencia', v)} vacio="Any experience" opciones={EXPERIENCIAS} />
+        {organizaciones.length > 0 && <Selector valor={filtros.org} cambiar={(v) => set('org', v)} vacio="Any organisation" opciones={Object.fromEntries(organizaciones.map((o) => [o.id, o.nombre]))} />}
         <input className="corto" type="number" min={0} max={100} placeholder="Min score" value={filtros.minimo} onChange={(e) => set('minimo', e.target.value)} />
         <label className="check"><input type="checkbox" checked={filtros.sinNoFoodTrucks} onChange={(e) => set('sinNoFoodTrucks', e.target.checked)} />Hide “no food trucks”</label>
         <label className="check"><input type="checkbox" checked={filtros.fuera} onChange={(e) => set('fuera', e.target.checked)} />Show out of scope</label>
@@ -133,9 +137,10 @@ export function Lista({ api }: { api: Api }) {
             ))}</tr>
           </thead>
           <tbody>
-            {visibles.map(({ f, e, experiencia }) => (
+            {visibles.map(({ f, e, experiencia, orgs }) => (
               <tr key={f.id} onClick={() => { location.hash = `#/festival/${f.id}`; }}>
-                <td><a href={`#/festival/${f.id}`}>{f.nombre}</a>{f.fuera_de_alcance && <span className="etiqueta gris">Out of scope</span>}</td>
+                <td><a href={`#/festival/${f.id}`}>{f.nombre}</a>{f.fuera_de_alcance && <span className="etiqueta gris">Out of scope</span>}
+                  {orgs.length > 0 && <div className="tenue via">via {orgs.map((o) => o.nombre).join(', ')}</div>}</td>
                 <td>{label(PAISES, f.pais)}</td>
                 <td>{e ? <span className={`estado estado-${e.estado}`}>{label(ESTADOS, e.estado)}</span> : '—'}</td>
                 <td><Puntuacion e={e} /></td>
@@ -156,7 +161,7 @@ export function Lista({ api }: { api: Api }) {
   );
 }
 
-function armarFila(f: Festival, eds: Edicion[], cs: Contacto[]): Fila {
+function armarFila(f: Festival, eds: Edicion[], cs: Contacto[], orgs: Organizacion[], vs: Vinculo[]): Fila {
   const propias = eds.filter((e) => e.festival_id === f.id).sort((a, b) => a.anio - b.anio);
   const principal = cs.find((c) => c.festival_id === f.id && c.principal && !c.baja_en);
   return {
@@ -164,6 +169,7 @@ function armarFila(f: Festival, eds: Edicion[], cs: Contacto[]): Fila {
     e: propias[propias.length - 1],
     experiencia: [...propias].reverse().find((e) => e.experiencia)?.experiencia ?? null,
     email: principal?.email ?? null,
+    orgs: orgs.filter((o) => vs.some((v) => v.festival_id === f.id && v.organizacion_id === o.id)),
   };
 }
 

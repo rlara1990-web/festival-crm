@@ -17,10 +17,12 @@ const datos = {
       'proxima_accion_fecha', 'experiencia', 'comentario_experiencia', 'proximo_recontacto']),
     recontactos: 0,
   })),
-  contactos: r.contactos.map((c) => nulos(c, ['nombre', 'rol', 'primer_contacto_en', 'baja_en'])),
-  interacciones: r.interacciones.map((i) => ({ ...i, creado_en: ahora })),
+  contactos: r.contactos.map((c) => nulos(c, ['nombre', 'rol', 'primer_contacto_en', 'baja_en', 'organizacion_id'])),
+  interacciones: r.interacciones.map((i) => ({ ...i, organizacion_id: null, creado_en: ahora })),
   comentarios: r.comentarios.map((c) => ({ ...c, resuelto: false, creado_en: ahora })),
   config: CONFIG_INICIAL,
+  organizaciones: [],
+  vinculos: [],
 };
 writeFileSync('web/src/data/demo-data.ts', `// Generado por scripts/generar-demo.ts. No editar.\nexport const DATOS = ${JSON.stringify(datos)};\n`);
 console.log(`Demo: ${datos.festivales.length} festivales`);
