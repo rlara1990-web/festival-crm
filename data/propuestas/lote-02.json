@@ -1,0 +1,42 @@
+[
+  { "festival": "Waking Life", "tabla": "festivales", "campo": "acampada", "valor": true,
+    "fuente_url": "https://wakinglife.pt/tickets",
+    "motivo": "Official tickets page: \"All tickets include free car parking and access to the campsite.\" Campervans pay €35; tipis also available." },
+  { "festival": "Waking Life", "tabla": "ediciones", "campo": "fecha_inicio", "valor": "2027-06-16",
+    "fuente_url": "https://wakinglife.pt/tickets",
+    "motivo": "Official site: \"Next convergence lakeside: 16 to 21 June 2027.\"" },
+  { "festival": "Waking Life", "tabla": "ediciones", "campo": "fecha_fin", "valor": "2027-06-21",
+    "fuente_url": "https://wakinglife.pt/tickets",
+    "motivo": "End date of the 2027 edition (16–21 June)." },
+  { "festival": "Waking Life", "tabla": "ediciones", "campo": "duracion_dias", "valor": 6,
+    "fuente_url": "https://wakinglife.pt/tickets",
+    "motivo": "16–21 June 2027 is 6 days (the 2026 list said 8)." },
+  { "festival": "Waking Life", "tabla": "festivales", "campo": "web_url", "valor": "https://wakinglife.pt/",
+    "fuente_url": "https://wakinglife.pt/",
+    "motivo": "Official website." },
+  { "festival": "Waking Life", "tabla": "contactos", "campo": "nuevo", "valor": { "email": "info@wakinglife.pt", "rol": "General info" },
+    "fuente_url": "https://wakinglife.pt/tickets",
+    "motivo": "General contact email on the official site. No specific address for food vendors found." },
+
+  { "festival": "Aquasella Festival", "tabla": "festivales", "campo": "web_url", "valor": "https://www.aquasella.com/",
+    "fuente_url": "https://www.aquasella.com/",
+    "motivo": "Official website." },
+  { "festival": "Aquasella Festival", "tabla": "festivales", "campo": "instagram_url", "valor": "https://www.instagram.com/aquasellafest/",
+    "fuente_url": "https://www.aquasella.com/",
+    "motivo": "Instagram linked from the official website." },
+
+  { "festival": "Paredes de Coura", "tabla": "festivales", "campo": "instagram_url", "valor": "https://www.instagram.com/vodafoneparedesdecoura/",
+    "fuente_url": "https://www.vodafoneparedesdecoura.com/en/festival",
+    "motivo": "Instagram linked from the official website." },
+
+  { "festival": "NOS Primavera Sound", "tabla": "festivales", "campo": "web_url", "valor": "https://www.primaverasound.com/en/porto",
+    "fuente_url": "https://www.primaverasound.com/en/porto",
+    "motivo": "Official website (now Primavera Sound Porto)." },
+
+  { "festival": "FMM Sines", "tabla": "festivales", "campo": "instagram_url", "valor": "https://www.instagram.com/fmm_sines/",
+    "fuente_url": "https://www.fmmsines.pt/pages/943",
+    "motivo": "Instagram linked from the official website." },
+  { "festival": "FMM Sines", "tabla": "ediciones", "campo": "conv_url", "valor": "https://www.fmmsines.pt/pages/943",
+    "fuente_url": "https://www.fmmsines.pt/pages/943",
+    "motivo": "Application page from the 2026 list. It currently says \"Voltamos em 2027\" (not open yet). Organiser contact on the site: ci@mun-sines.pt (Sines city council)." }
+]
