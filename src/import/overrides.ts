@@ -64,7 +64,7 @@ export const OVERRIDES: Record<string, Override> = {
     nombre: 'RFM Somnii',
     e2026: {
       ...PARTICIPAMOS, experiencia: 'muy_negativa',
-      comentario_experiencia: 'Poor sales. On the beach, operations were a hassle, and the relationship with the production company was not good.',
+      comentario_experiencia: 'Poor sales. On the beach, operations were a hassle.',
     },
   },
   'vila de mouros': {

@@ -1,5 +1,15 @@
 # Registro de cambios
 
+## 2026-11-24 (publicación)
+
+### Añadido
+- Publicación automática en GitHub Pages (`.github/workflows/publicar.yml`): al cambiar `main` se ejecutan las
+  pruebas, se compila la web y se publica en crm.mocheverde.com (`web/public/CNAME`).
+
+### Cambiado
+- Hosting: GitHub Pages en lugar de Cloudflare Pages (todo en el mismo lugar que el ERP). Repositorio público.
+- Comentario de experiencia de RFM Somnii acortado (sin referencia a la productora), en el código y en Supabase.
+
 ## 2026-11-24 (organizaciones)
 
 ### Añadido

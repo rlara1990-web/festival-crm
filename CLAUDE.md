@@ -18,8 +18,8 @@ Idiomas:
 
 ## Decisiones ya tomadas
 - Aplicación web con base de datos en Supabase, proyecto `festival-crm` (ref `mabgenlzxpefappjlmgd`, eu-west-1), separado del ERP.
-- La web se aloja en la nube (no depende de ningún PC encendido). Hosting: plan gratuito de Cloudflare Pages (permite uso comercial; el gratuito de Vercel no).
-- Repositorio privado. Este archivo es la fuente de contexto para cualquier sesión de Claude Code.
+- La web se aloja en la nube (no depende de ningún PC encendido). Hosting: GitHub Pages en crm.mocheverde.com (como el ERP en admin.mocheverde.com), dominio en GoDaddy. Publicación automática desde la rama main (`.github/workflows/publicar.yml`).
+- Repositorio público (decisión de Rodrigo, 24/11/2026, para usar GitHub Pages como el ERP). Los datos operativos viven en Supabase, protegidos por login; no guardar en el repositorio secretos ni datos que no deban ser públicos. Este archivo es la fuente de contexto para cualquier sesión de Claude Code.
 - Alcance: Portugal y España. Festivales de música y también otros eventos (p. ej. Web Summit). Fuera de PT/ES se marca `fuera_de_alcance` (desmarcable).
 - Nada se envía sin confirmación explícita. Claude prepara borradores en Outlook; Rodrigo o Zac los revisan y envían.
 - Ventas y márgenes viven en el ERP, no en el CRM. El CRM solo guarda la experiencia (clasificación) y comentarios.
@@ -91,7 +91,7 @@ Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos 
 Referencias de Rodrigo: Waking Life y Paredes de Coura (música con acampada) fueron los mejores; Basilar es pequeño pero internacional y bien curado como Waking Life.
 
 ## Datos acordados para la carga inicial
-- Experiencia 2026: Waking Life muy positiva; Paredes de Coura muy positiva; NOS Primavera Sound positiva; RFM Somnii muy negativa (malas ventas, en la playa, operación tediosa, mal trato con la productora); Vilar de Mouros muy negativa (público no adecuado: rock, pop punk). Los cinco en estado Aceptado en 2026.
+- Experiencia 2026: Waking Life muy positiva; Paredes de Coura muy positiva; NOS Primavera Sound positiva; RFM Somnii muy negativa (malas ventas, en la playa, operación tediosa); Vilar de Mouros muy negativa (público no adecuado: rock, pop punk). Los cinco en estado Aceptado en 2026.
 - Basilar: no participamos. Rechazado en 2026 (decidieron no ir con nosotros: pocos food vendors y menú muy acotado). Género electrónica, público internacional, parecido a Waking Life.
 - Boom Festival: formulario enviado el 05/11/2026 (https://www.boomfestival.org/participate/food-vendors-chaishops); la decisión se comunica en febrero.
 
@@ -106,7 +106,7 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 ## Código
 - `src/scoring/`: puntuación (compartida por la importación y la web). `src/shared/`: lógica compartida (campos pendientes).
 - `src/import/` y `scripts/generar-seed.ts`: importación del CSV y carga inicial.
-- `web/`: aplicación (React + Vite). `npm run dev` para desarrollo; `npm run build` genera `dist/` para Cloudflare Pages.
+- `web/`: aplicación (React + Vite). `npm run dev` para desarrollo; `npm run build` genera `dist/` (GitHub Pages).
   Modo demo local sin Supabase: `npm run demo-data` y abrir `http://127.0.0.1:5173/?demo`.
 - Pruebas: `npm test`. Tipos: `npm run typecheck`.
 
