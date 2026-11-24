@@ -59,6 +59,7 @@ Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta 
 
 ## Modelo de datos
 Fuente de verdad: `supabase/migrations/` (tres migraciones del 24/11/2026, aplicadas en Supabase). Lo marcado **(v2)** ya está implementado en la base; falta la interfaz.
+Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones, 2 comentarios, 72 fuentes. La carga se niega a ejecutarse si ya hay festivales.
 
 - `festivales`: nombre, país ISO, ciudad, tipo, géneros, perfil de público, web, formulario de contacto, redes, idioma de correo, `fuera_de_alcance`, `campos_pendientes`, notas. **(v2)** `acampada` (sí / no / desconocido), `parecido_a` (lista de festivales, solo referencia, no puntúa).
 - `ediciones`: una por festival y año. Fechas (o `fechas_texto`), duración, aforo min/max, estado, próxima acción, convocatoria (apertura, cierre, método, URL, exclusividad, coste, prioridad a antiguos, food trucks, fuente y fecha de revisión), puntuación con detalle. **(v2)** quitar ventas/resultado/margen/notas de resultados; añadir `experiencia` (muy positiva, positiva, neutra, negativa, muy negativa) y `comentario_experiencia`; nuevos estados del pipeline; contador de recontactos y fecha del próximo recontacto.

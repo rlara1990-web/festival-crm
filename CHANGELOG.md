@@ -16,6 +16,8 @@
   Resultado 2027: Waking Life 82, Paredes de Coura 75, NOS Primavera Sound 72, RFM Somnii 48, Vilar de Mouros 41.
 - La carga inicial se genera en lotes de 40 filas por sentencia.
 
+- Datos cargados en Supabase (proyecto festival-crm): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones.
+
 ### Añadido
 - Festivales: acampada y "parecido a". Contactos: contacto principal. Interacciones: reuniones, hilo de Outlook y origen.
 - Tablas nuevas: comentarios, propuestas, documentos (con bucket privado de Storage), solicitudes y ajustes.
