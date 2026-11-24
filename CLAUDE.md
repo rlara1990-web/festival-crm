@@ -27,7 +27,7 @@ Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cue
 2. Priorizar: lista con búsqueda, orden y filtros por cualquier campo.
 3. Preparar correo: Claude redacta un borrador personalizado por festival (idioma del país, algo propio del festival) a partir del mensaje base, y lo deja en Borradores de Outlook. No hay plantillas fijas.
 4. Envío: Rodrigo o Zac editan y envían desde Outlook (cualquier dispositivo).
-5. Detección: Claude revisa Outlook (Enviados y Bandeja de entrada) a las 10:00 y a las 15:00. Reconoce los correos por la dirección del contacto del festival y el identificador del hilo de Outlook.
+5. Detección: Claude revisa Outlook (Enviados y Bandeja de entrada) a las 10:00 y a las 15:00 (hora de Lisboa). Reconoce los correos por la dirección del contacto del festival y el identificador del hilo de Outlook.
    - Casos claros (correo enviado a un festival, recontacto vencido sin respuesta) → Claude cambia el estado solo y lo registra.
    - Respuestas de festivales → Claude resume y deja una propuesta de cambio de estado para confirmar.
 6. Seguimiento: a los 2 días hábiles sin respuesta (lunes a viernes, sin festivos) → Recontacto 1; otros 2 días → Recontacto 2; otros 2 días → Sin respuesta.
@@ -98,12 +98,21 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 3. Outlook: revisión 10:00 y 15:00, registro de enviados, recontactos, propuestas a partir de respuestas, borradores personalizados, reuniones.
 4. Nuevos festivales y eventos en PT/ES.
 
+## Datos de Moche Verde para los correos
+- Web: mocheverde.com
+- Instagram: @mocheverdee
+- Teléfono: +351 916 273 966 (Rodrigo). Solo este número: Zac no habla portugués y no queremos perder un lead por teléfono.
+
+## Outlook (verificado el 24/11/2026)
+- El conector de Microsoft 365 está conectado a info@mocheverde.com (cuenta correcta).
+- Permisos actuales solo de lectura (Mail.Read, Calendars.Read). Para crear borradores y eventos hace falta habilitar la escritura del conector (Mail.ReadWrite / Calendars.ReadWrite). Hasta entonces solo funciona la detección de enviados y respuestas.
+- Revisiones en hora de Lisboa.
+- Los borradores de recontacto se preparan solo cuando Rodrigo o Zac lo piden, no automáticamente.
+
 ## Pendiente de decidir
-- Verificar que el conector de Microsoft 365 apunta a la cuenta de Moche Verde.
-- Zona horaria de las revisiones (Lisboa o Madrid).
-- Si los borradores de recontacto se crean solos en Outlook al vencer el plazo.
+- Si se agrega una tercera revisión diaria.
 - Hosting de la web.
-- Web, Instagram y teléfono exactos de Moche Verde para el mensaje base.
+- Cómo se piden tareas a Claude desde el CRM (propuesta: tabla de solicitudes que se procesa en cada revisión).
 
 ## Preferencias de trabajo
 - Antes de cambiar la estructura de datos, explicar el cambio y su motivo.
