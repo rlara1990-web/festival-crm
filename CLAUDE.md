@@ -11,7 +11,7 @@ Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cue
 
 ## Decisiones ya tomadas
 - Aplicación web con base de datos en Supabase, proyecto `festival-crm` (ref `mabgenlzxpefappjlmgd`, eu-west-1), separado del ERP.
-- La web se aloja en la nube (no depende de ningún PC encendido). Hosting por decidir; debe permitir uso comercial en su plan gratuito (p. ej. Netlify o Cloudflare Pages; el plan gratuito de Vercel no lo permite).
+- La web se aloja en la nube (no depende de ningún PC encendido). Hosting: plan gratuito de Cloudflare Pages (permite uso comercial; el gratuito de Vercel no).
 - Repositorio privado. Este archivo es la fuente de contexto para cualquier sesión de Claude Code.
 - Alcance: Portugal y España. Festivales de música y también otros eventos (p. ej. Web Summit). Fuera de PT/ES se marca `fuera_de_alcance` (desmarcable).
 - Nada se envía sin confirmación explícita. Claude prepara borradores en Outlook; Rodrigo o Zac los revisan y envían.
@@ -27,7 +27,7 @@ Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cue
 2. Priorizar: lista con búsqueda, orden y filtros por cualquier campo.
 3. Preparar correo: Claude redacta un borrador personalizado por festival (idioma del país, algo propio del festival) a partir del mensaje base, y lo deja en Borradores de Outlook. No hay plantillas fijas.
 4. Envío: Rodrigo o Zac editan y envían desde Outlook (cualquier dispositivo).
-5. Detección: Claude revisa Outlook (Enviados y Bandeja de entrada) a las 10:00 y a las 15:00 (hora de Lisboa). Reconoce los correos por la dirección del contacto del festival y el identificador del hilo de Outlook.
+5. Detección: Claude revisa Outlook (Enviados y Bandeja de entrada) a las 10:00, 15:00 y 18:00 (hora de Lisboa). Reconoce los correos por la dirección del contacto del festival y el identificador del hilo de Outlook.
    - Casos claros (correo enviado a un festival, recontacto vencido sin respuesta) → Claude cambia el estado solo y lo registra.
    - Respuestas de festivales → Claude resume y deja una propuesta de cambio de estado para confirmar.
 6. Seguimiento: a los 2 días hábiles sin respuesta (lunes a viernes, sin festivos) → Recontacto 1; otros 2 días → Recontacto 2; otros 2 días → Sin respuesta.
@@ -39,7 +39,7 @@ Usuarios: Rodrigo y Zac (fundadores). Comparten un solo usuario del CRM y la cue
 12. Nuevos festivales y eventos: Claude los propone con fuentes; si se aceptan entran como Por contactar.
 
 ### Mensaje base para los correos
-Correo de acercamiento: presentarnos, explicar el concepto y la comida, que entregamos un buen producto, que no hacemos esperar a los clientes (quieren aprovechar el tiempo viendo a sus artistas) sin descuidar el servicio. Adjuntar web, Instagram y teléfono de contacto (pendiente: Rodrigo debe dar los datos exactos).
+Correo de acercamiento: presentarnos, explicar el concepto y la comida, que entregamos un buen producto, que no hacemos esperar a los clientes (quieren aprovechar el tiempo viendo a sus artistas) sin descuidar el servicio. Incluir web, Instagram y teléfono de contacto (ver "Datos de Moche Verde para los correos").
 
 ## Pipeline (estados de cada edición)
 ```
@@ -60,6 +60,7 @@ Fuente de verdad: `supabase/migrations/`. La migración inicial (24/11/2026) ya 
 - **(v2)** `comentarios`: comentario sobre cualquier campo de cualquier registro, estilo Google Docs (marca visible y tooltip). Autor: Rodrigo/Zac o Claude. Sustituye al campo separado de comentarios de Claude.
 - **(v2)** `propuestas`: dato propuesto por Claude (registro, campo, valor, fuente URL, fecha, estado pendiente/aceptada/rechazada). También festivales/eventos nuevos y cambios de estado a partir de respuestas.
 - **(v2)** `documentos`: repositorio de archivos (dossier, menús, fotos) en Supabase Storage, general o ligado a un festival.
+- **(v2)** `solicitudes`: pedidos a Claude hechos desde el CRM (botón "Pedir a Claude": completar datos, preparar correo o recontacto). Claude los procesa en la siguiente revisión; para algo inmediato se le pide en una conversación.
 - **(v2)** `ajustes`: mensaje base de correo, web/Instagram/teléfono de Moche Verde, días de recontacto (2 hábiles).
 - `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). Cálculo en `src/scoring/score.ts`.
 - `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
@@ -95,12 +96,12 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.
 2. Completar datos: Claude propone los datos que faltan con fuentes.
-3. Outlook: revisión 10:00 y 15:00, registro de enviados, recontactos, propuestas a partir de respuestas, borradores personalizados, reuniones.
+3. Outlook: revisiones 10:00, 15:00 y 18:00, registro de enviados, recontactos, propuestas a partir de respuestas, borradores personalizados, reuniones.
 4. Nuevos festivales y eventos en PT/ES.
 
 ## Datos de Moche Verde para los correos
 - Web: mocheverde.com
-- Instagram: @mocheverdee
+- Instagram: @moche.verde
 - Teléfono: +351 916 273 966 (Rodrigo). Solo este número: Zac no habla portugués y no queremos perder un lead por teléfono.
 
 ## Outlook (verificado el 24/11/2026)
@@ -110,9 +111,7 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Los borradores de recontacto se preparan solo cuando Rodrigo o Zac lo piden, no automáticamente.
 
 ## Pendiente de decidir
-- Si se agrega una tercera revisión diaria.
-- Hosting de la web.
-- Cómo se piden tareas a Claude desde el CRM (propuesta: tabla de solicitudes que se procesa en cada revisión).
+- Habilitar escritura en el conector de Microsoft 365 (necesario para la etapa 3).
 
 ## Preferencias de trabajo
 - Antes de cambiar la estructura de datos, explicar el cambio y su motivo.
