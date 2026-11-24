@@ -3,6 +3,7 @@
 ## 2026-11-24 (búsqueda de datos)
 
 ### Añadido
+- Columna City en la lista de festivales (ordenable).
 - Lotes 1 y 2 de propuestas (`data/propuestas/`): 41 datos para los 10 festivales con mejor puntuación, 24 con la web oficial como fuente.
 - `scripts/frases_web.py`: extrae frases relevantes de una página descargada (incluido texto dentro de scripts).
 
