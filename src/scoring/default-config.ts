@@ -27,4 +27,5 @@ export const CONFIG_INICIAL: PuntuacionConfig = {
     { hasta: 60000, valor: 80 },
     { hasta: null, valor: 65 },
   ],
+  valor_faltante: 50,
 };

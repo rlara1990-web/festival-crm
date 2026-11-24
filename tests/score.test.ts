@@ -48,19 +48,29 @@ describe('calcularPuntuacion', () => {
     // 30 + 16 + 13.5 + 10 + 10 + 9 + 4.5 = 93
     expect(r.puntuacion).toBe(93);
     expect(r.incompleta).toBe(false);
+    expect(r.cobertura).toBe(100);
   });
 
   it('promedia varios géneros', () => {
     expect(calcularPuntuacion({ ...base, generos: ['electronica', 'metal'] }, cfg).detalle.genero.valor).toBe(45);
   });
 
-  it('redistribuye los pesos cuando faltan factores', () => {
+  it('los factores sin dato cuentan como neutros (50) y se informa la cobertura', () => {
     const r = calcularPuntuacion({ ...base, generos: ['world'], tipo: 'musica' }, cfg);
-    // pesos disponibles 20 + 10 = 30 -> 90*(20/30) + 90*(10/30) = 90
-    expect(r.puntuacion).toBe(90);
+    // 90*20 + 90*10 + 50*(30+15+10+10+5) = 1800 + 900 + 3500 = 6200 -> 62
+    expect(r.puntuacion).toBe(62);
     expect(r.incompleta).toBe(true);
-    expect(r.detalle.publico.peso).toBe(0);
-    expect(r.detalle.genero.peso).toBe(0.667);
+    expect(r.cobertura).toBe(30);
+    expect(r.detalle.publico).toMatchObject({ valor: null, peso: 0.15 });
+  });
+
+  it('pocos datos altos no superan a un festival conocido y bueno (caso Him Dub vs Waking Life)', () => {
+    const himDub = calcularPuntuacion({ ...base, tipo: 'musica', duracion_dias: 7, aforo_min: 11000, aforo_max: 25000 }, cfg);
+    const waking = calcularPuntuacion({ ...base, experiencia: 'muy_positiva', generos: ['electronica'], tipo: 'musica', duracion_dias: 8, aforo_min: 10000, aforo_max: 10000 }, cfg);
+    // Him Dub: (450 + 1000 + 900 + 50*75) / 100 = 61 ; Waking Life: (3000+1600+450+1000+900 + 50*25) / 100 = 82
+    expect(himDub.puntuacion).toBe(61);
+    expect(himDub.cobertura).toBe(25);
+    expect(waking.puntuacion).toBe(82);
   });
 
   it('sin experiencia, género, público ni aforo no puntúa', () => {
@@ -69,7 +79,8 @@ describe('calcularPuntuacion', () => {
   });
 
   it('la experiencia sola basta para puntuar', () => {
-    expect(calcularPuntuacion({ ...base, experiencia: 'muy_negativa' }, cfg).puntuacion).toBe(0);
+    // 0*30 + 50*70 = 3500 -> 35
+    expect(calcularPuntuacion({ ...base, experiencia: 'muy_negativa' }, cfg).puntuacion).toBe(35);
   });
 
   it('informa claves sin afinidad configurada y las ignora', () => {
@@ -87,7 +98,7 @@ describe('calcularPuntuacion', () => {
   it('un festival con experiencia muy negativa queda muy por debajo de uno muy positivo', () => {
     const vilar = calcularPuntuacion({ ...base, experiencia: 'muy_negativa', generos: ['rock', 'punk', 'pop'], tipo: 'musica', duracion_dias: 4 }, cfg);
     const coura = calcularPuntuacion({ ...base, experiencia: 'muy_positiva', generos: ['rock', 'indie'], tipo: 'musica', duracion_dias: 4, aforo_min: 100000, aforo_max: 100000 }, cfg);
-    expect(coura.puntuacion! - vilar.puntuacion!).toBeGreaterThan(40);
+    expect(coura.puntuacion! - vilar.puntuacion!).toBeGreaterThan(30);
   });
 
   it('siempre está entre 0 y 100', () => {

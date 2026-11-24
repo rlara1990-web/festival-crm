@@ -128,8 +128,10 @@ describe('importación del CSV original', () => {
     expect(p('Paredes de Coura')).toBeGreaterThan(p('NOS Primavera Sound'));
     expect(p('NOS Primavera Sound')).toBeGreaterThan(p('RFM Somnii'));
     expect(p('Vilar de Mouros')).toBeLessThan(p('RFM Somnii') + 5);
-    // Paredes 84 vs Vilar 36 con los pesos acordados (ver CHANGELOG)
-    expect(p('Paredes de Coura') - p('Vilar de Mouros')).toBeGreaterThan(40);
+    // Con faltantes neutros: Waking Life 82, Paredes 75, Primavera 72, Somnii 48, Vilar 41
+    expect([p('Waking Life'), p('Paredes de Coura'), p('NOS Primavera Sound'), p('RFM Somnii'), p('Vilar de Mouros')])
+      .toEqual([82, 75, 72, 48, 41]);
+    expect(p('Him Dub Festival')).toBe(61);
   });
 
   it('Basilar: rechazado en 2026 con motivo como comentario, internacional y parecido a Waking Life', () => {

@@ -11,6 +11,11 @@
   Solo se puntúa la edición objetivo (2027), con la experiencia más reciente.
 - Textos generados por la importación, en inglés (la interfaz será en inglés).
 
+- Puntuación: los factores sin dato cuentan como neutros (50) en vez de repartir su peso; se guarda la cobertura.
+  Motivo: con el reparto, Him Dub (solo aforo, duración y tipo) quedaba primero, por encima de Waking Life.
+  Resultado 2027: Waking Life 82, Paredes de Coura 75, NOS Primavera Sound 72, RFM Somnii 48, Vilar de Mouros 41.
+- La carga inicial se genera en lotes de 40 filas por sentencia.
+
 ### Añadido
 - Festivales: acampada y "parecido a". Contactos: contacto principal. Interacciones: reuniones, hilo de Outlook y origen.
 - Tablas nuevas: comentarios, propuestas, documentos (con bucket privado de Storage), solicitudes y ajustes.

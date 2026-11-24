@@ -24,6 +24,7 @@ export interface Edicion extends DatosEdicion {
   fecha_inicio: string | null; fecha_fin: string | null; fechas_texto: string | null; duracion_dias: number | null;
   aforo_min: number | null; aforo_max: number | null;
   puntuacion: number | null; puntuacion_detalle: ResultadoPuntuacion['detalle'] | null; puntuacion_incompleta: boolean;
+  puntuacion_cobertura: number | null;
 }
 
 export interface Contacto {
@@ -81,13 +82,14 @@ function puntuar(ed: Edicion, f: Festival, experienciaReciente: string | null, c
   ed.puntuacion = r.puntuacion;
   ed.puntuacion_detalle = r.detalle;
   ed.puntuacion_incompleta = r.incompleta;
+  ed.puntuacion_cobertura = r.cobertura;
 }
 
 function nuevaEdicion(festival_id: string, anio: number, base: Partial<Edicion> = {}): Edicion {
   return {
     id: uuidDe('edicion', festival_id, String(anio)), festival_id, anio, estado: 'por_contactar',
     fecha_inicio: null, fecha_fin: null, fechas_texto: null, duracion_dias: null, aforo_min: null, aforo_max: null,
-    puntuacion: null, puntuacion_detalle: null, puntuacion_incompleta: true, ...base,
+    puntuacion: null, puntuacion_detalle: null, puntuacion_incompleta: true, puntuacion_cobertura: null, ...base,
   };
 }
 

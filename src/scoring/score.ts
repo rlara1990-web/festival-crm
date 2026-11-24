@@ -19,6 +19,8 @@ export interface PuntuacionConfig {
   valores_acampada: { si: number; no: number };
   tramos_duracion: Tramo[];
   tramos_aforo: Tramo[];
+  /** Valor con el que cuenta un factor sin dato (neutro). */
+  valor_faltante: number;
 }
 
 export interface EntradaPuntuacion {
@@ -33,14 +35,15 @@ export interface EntradaPuntuacion {
 }
 
 export interface DetalleFactor {
-  valor: number | null; // afinidad 0–100, null si falta el dato
-  peso: number; // peso efectivo tras redistribuir (0 si falta)
+  valor: number | null; // afinidad 0–100, null si falta el dato (cuenta como valor_faltante)
+  peso: number; // fracción del peso total (0–1)
   desconocidos?: string[]; // claves sin afinidad configurada
 }
 
 export interface ResultadoPuntuacion {
   puntuacion: number | null;
   incompleta: boolean;
+  cobertura: number; // % del peso total con datos reales
   detalle: Record<Factor, DetalleFactor>;
 }
 
@@ -84,20 +87,23 @@ export function calcularPuntuacion(e: EntradaPuntuacion, cfg: PuntuacionConfig):
     aforo: { valor: aforo == null ? null : valorTramo(aforo, cfg.tramos_aforo) },
   };
 
-  const pesoDisponible = FACTORES.reduce((s, f) => s + (crudo[f].valor != null ? cfg.pesos[f] : 0), 0);
+  // Los factores sin dato cuentan como neutros (valor_faltante): ni suman ni restan.
+  const pesoTotal = FACTORES.reduce((s, f) => s + cfg.pesos[f], 0);
+  const pesoConDatos = FACTORES.reduce((s, f) => s + (crudo[f].valor != null ? cfg.pesos[f] : 0), 0);
   const detalle = {} as Record<Factor, DetalleFactor>;
   let total = 0;
   for (const f of FACTORES) {
     const { valor, desconocidos } = crudo[f];
-    const peso = valor != null && pesoDisponible > 0 ? cfg.pesos[f] / pesoDisponible : 0;
+    const peso = pesoTotal > 0 ? cfg.pesos[f] / pesoTotal : 0;
     detalle[f] = { valor, peso: Math.round(peso * 1000) / 1000, ...(desconocidos ? { desconocidos } : {}) };
-    if (valor != null) total += valor * peso;
+    total += (valor ?? cfg.valor_faltante) * peso;
   }
 
   const suficiente = FACTORES_SUFICIENTES.some((f) => crudo[f].valor != null);
   return {
     puntuacion: suficiente ? Math.round(total) : null,
     incompleta: FACTORES.some((f) => crudo[f].valor == null),
+    cobertura: pesoTotal > 0 ? Math.round((pesoConDatos / pesoTotal) * 100) : 0,
     detalle,
   };
 }
@@ -115,6 +121,7 @@ export function validarConfig(cfg: PuntuacionConfig): string[] {
   const errores: string[] = [];
   const suma = FACTORES.reduce((s, f) => s + (cfg.pesos[f] ?? 0), 0);
   if (suma <= 0) errores.push('La suma de pesos debe ser mayor que 0');
+  if (cfg.valor_faltante < 0 || cfg.valor_faltante > 100) errores.push('valor_faltante fuera de 0–100');
   for (const f of FACTORES) if ((cfg.pesos[f] ?? 0) < 0) errores.push(`Peso negativo: ${f}`);
   const tablas = {
     afinidad_experiencia: cfg.afinidad_experiencia, afinidad_genero: cfg.afinidad_genero,

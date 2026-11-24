@@ -22,8 +22,13 @@ export function lit(v: Valor): string {
 
 function inserts<T extends object>(tabla: string, filas: T[], columnas: (keyof T & string)[]): string {
   if (filas.length === 0) return '';
-  const valores = filas.map((f) => `  (${columnas.map((c) => lit(f[c] as Valor)).join(', ')})`).join(',\n');
-  return `insert into ${tabla} (${columnas.join(', ')}) values\n${valores};\n`;
+  // Lotes de 40 filas: sentencias más cortas, fáciles de enviar por partes
+  const lotes: string[] = [];
+  for (let i = 0; i < filas.length; i += 40) {
+    const valores = filas.slice(i, i + 40).map((f) => `  (${columnas.map((c) => lit(f[c] as Valor)).join(', ')})`).join(',\n');
+    lotes.push(`insert into ${tabla} (${columnas.join(', ')}) values\n${valores};\n`);
+  }
+  return lotes.join('\n');
 }
 
 export const AJUSTES_INICIALES: { clave: string; valor: unknown; descripcion: string }[] = [
@@ -66,7 +71,7 @@ export function generarSql(r: ResultadoImportacion, cfg: PuntuacionConfig, ahora
     '',
     inserts('puntuacion_config', [{ activa: true, ...cfg, notas: 'Agreed with Rodrigo on 24/11/2026.' }],
       ['activa', 'pesos', 'afinidad_experiencia', 'afinidad_genero', 'afinidad_publico', 'afinidad_tipo',
-        'valores_acampada', 'tramos_duracion', 'tramos_aforo', 'notas']),
+        'valores_acampada', 'tramos_duracion', 'tramos_aforo', 'valor_faltante', 'notas']),
     inserts('ajustes', AJUSTES_INICIALES.map((a) => ({ ...a, valor: new Crudo(`${lit(JSON.stringify(a.valor))}::jsonb`) })), ['clave', 'valor', 'descripcion']),
     inserts('festivales', festivales, ['id', 'nombre', 'pais', 'tipo', 'generos', 'perfil_publico', 'notas_publico',
       'web_url', 'formulario_contacto_url', 'idioma_correo', 'fuera_de_alcance', 'campos_pendientes', 'notas',
@@ -74,7 +79,7 @@ export function generarSql(r: ResultadoImportacion, cfg: PuntuacionConfig, ahora
     inserts('ediciones', ediciones, ['id', 'festival_id', 'anio', 'fecha_inicio', 'fecha_fin', 'fechas_texto',
       'duracion_dias', 'aforo_min', 'aforo_max', 'estado', 'proxima_accion', 'proxima_accion_fecha', 'conv_apertura',
       'conv_metodo', 'conv_url', 'conv_notas', 'conv_fuente_url', 'conv_revisado_en', 'prioridad_antiguos',
-      'acepta_food_trucks', 'puntuacion', 'puntuacion_detalle', 'puntuacion_incompleta', 'puntuacion_calculada_en',
+      'acepta_food_trucks', 'puntuacion', 'puntuacion_detalle', 'puntuacion_incompleta', 'puntuacion_cobertura', 'puntuacion_calculada_en',
       'experiencia', 'comentario_experiencia']),
     inserts('contactos', r.contactos, ['id', 'festival_id', 'email', 'telefono', 'canal_preferido', 'principal',
       'verificar', 'motivo_verificar', 'notas']),

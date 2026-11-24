@@ -58,7 +58,7 @@ Descartado: decisión nuestra, en cualquier momento.
 Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta = nos ignoraron.
 
 ## Modelo de datos
-Fuente de verdad: `supabase/migrations/`. La migración inicial (24/11/2026) ya está aplicada en Supabase, sin datos cargados. Los cambios marcados como **(v2)** están acordados y pendientes de implementar.
+Fuente de verdad: `supabase/migrations/` (tres migraciones del 24/11/2026, aplicadas en Supabase). Lo marcado **(v2)** ya está implementado en la base; falta la interfaz.
 
 - `festivales`: nombre, país ISO, ciudad, tipo, géneros, perfil de público, web, formulario de contacto, redes, idioma de correo, `fuera_de_alcance`, `campos_pendientes`, notas. **(v2)** `acampada` (sí / no / desconocido), `parecido_a` (lista de festivales, solo referencia, no puntúa).
 - `ediciones`: una por festival y año. Fechas (o `fechas_texto`), duración, aforo min/max, estado, próxima acción, convocatoria (apertura, cierre, método, URL, exclusividad, coste, prioridad a antiguos, food trucks, fuente y fecha de revisión), puntuación con detalle. **(v2)** quitar ventas/resultado/margen/notas de resultados; añadir `experiencia` (muy positiva, positiva, neutra, negativa, muy negativa) y `comentario_experiencia`; nuevos estados del pipeline; contador de recontactos y fecha del próximo recontacto.
@@ -72,8 +72,9 @@ Fuente de verdad: `supabase/migrations/`. La migración inicial (24/11/2026) ya 
 - `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). Cálculo en `src/scoring/score.ts`.
 - `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
 
-## Puntuación de ajuste (acordada, v2 pendiente de implementar)
-Media ponderada 0–100. Si falta un factor, su peso se reparte entre los demás y se marca "datos incompletos". Sin género, público, aforo ni experiencia no se puntúa.
+## Puntuación de ajuste (implementada)
+Media ponderada 0–100. Un factor sin dato cuenta como neutro (50, `valor_faltante` en `puntuacion_config`): ni suma ni resta. Se guarda la cobertura (% del peso con datos reales) como indicador de confianza. Sin experiencia, género, público ni aforo no se puntúa. Solo se puntúa la edición objetivo (2027), con la experiencia más reciente.
+Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos (p. ej. Him Dub, solo aforo y duración) quedaban por encima de Waking Life.
 
 | Factor | Peso | Valores |
 |---|---|---|

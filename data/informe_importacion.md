@@ -97,52 +97,52 @@ Todos tienen pendiente `ciudad` y `acampada`, y casi todos `perfil_publico` (no 
 
 | Festival | Puntuación | Datos incompletos |
 |---|---|---|
-| Him Dub Festival | 94 | sí |
-| Sintra Festival | 93 | sí |
-| Waking Life | 93 | sí |
-| FMM Sines | 92 | sí |
-| ZNA Gathering | 88 | sí |
-| Transition Festival | 88 | sí |
-| MIL Festival | 86 | sí |
-| Moga Culture | 84 | sí |
-| Suncébeat New Horizons | 84 | sí |
-| Paredes de Coura | 84 | sí |
-| Aquasella Festival | 84 | sí |
-| Arenal Sound | 83 | sí |
-| Basilar | 83 | sí |
-| Medusa Sunbeach Festival | 82 | sí |
-| Neopop | 81 | sí |
-| Rototom | 81 | sí |
-| NOS Primavera Sound | 80 | sí |
-| Elétrico Festival | 80 | sí |
-| Benicassim | 80 | sí |
-| Vinculum | 80 | sí |
-| Holika Festival Calahorra | 79 | sí |
-| Vida Festival | 79 | sí |
-| NOS Alive | 79 | sí |
-| Sacred Soul | 79 | sí |
-| Festival Jardins do Marquês | 78 | sí |
-| Insomnia Festival | 78 | sí |
-| Yard Festival | 77 | sí |
-| Ebrovision Festival | 76 | sí |
-| Lisb-On | 73 | sí |
-| Weekend Beach Festival | 73 | sí |
-| Afronation | 73 | sí |
-| Festival F | 73 | sí |
-| Low Festival | 72 | sí |
-| North Music Festival | 67 | sí |
-| Bilbao BBK Live | 67 | sí |
-| Rock in Rio | 62 | sí |
-| Azkena Rock | 61 | sí |
-| Mares Vivas | 61 | sí |
-| Sonic Blast | 58 | sí |
-| OperaFest | 57 | sí |
-| Resurrection Fest | 53 | sí |
-| Barreiro International Music Festival Out Fest | 53 | sí |
+| Waking Life | 82 | sí |
+| Paredes de Coura | 75 | sí |
+| NOS Primavera Sound | 72 | sí |
+| FMM Sines | 69 | sí |
+| Sintra Festival | 67 | sí |
+| Transition Festival | 67 | sí |
+| Basilar | 67 | sí |
+| Moga Culture | 66 | sí |
+| Aquasella Festival | 66 | sí |
+| MIL Festival | 66 | sí |
+| ZNA Gathering | 65 | sí |
+| Arenal Sound | 65 | sí |
+| Suncébeat New Horizons | 64 | sí |
+| Benicassim | 64 | sí |
+| Neopop | 64 | sí |
+| Medusa Sunbeach Festival | 64 | sí |
+| Rototom | 64 | sí |
+| Holika Festival Calahorra | 63 | sí |
+| Vida Festival | 63 | sí |
+| NOS Alive | 63 | sí |
+| Insomnia Festival | 63 | sí |
+| Sacred Soul | 63 | sí |
+| Yard Festival | 62 | sí |
+| Elétrico Festival | 62 | sí |
+| Vinculum | 62 | sí |
+| Ebrovision Festival | 62 | sí |
+| Lisb-On | 61 | sí |
+| Festival Jardins do Marquês | 61 | sí |
+| Him Dub Festival | 61 | sí |
+| Weekend Beach Festival | 60 | sí |
+| Low Festival | 60 | sí |
+| North Music Festival | 58 | sí |
+| Bilbao BBK Live | 58 | sí |
+| Afronation | 58 | sí |
+| Festival F | 57 | sí |
+| Azkena Rock | 55 | sí |
+| Mares Vivas | 55 | sí |
+| Rock in Rio | 55 | sí |
+| Sonic Blast | 54 | sí |
+| Resurrection Fest | 52 | sí |
+| OperaFest | 52 | sí |
+| Barreiro International Music Festival Out Fest | 51 | sí |
 | Rock Imperium | 50 | sí |
-| RFM Somnii | 47 | sí |
-| Festival Vapor | 43 | sí |
-| Vilar de Mouros | 36 | sí |
+| RFM Somnii | 48 | sí |
+| Festival Vapor | 47 | sí |
+| Vilar de Mouros | 41 | sí |
 | Coala Festival | sin datos | sí |
 | Kalorama | sin datos | sí |
 | Avante Festival | sin datos | sí |
