@@ -60,6 +60,13 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--verde-claro
 .barra-izq nav a { padding: 4px 10px; border-radius: 6px; color: var(--tenue); }
 .barra-izq nav a.activo { background: var(--verde-claro); color: var(--verde); font-weight: 600; }
 .via { font-size: 12px; }
+.contador { display: inline-block; margin-left: 6px; min-width: 18px; padding: 0 5px; border-radius: 9px; background: var(--verde); color: #fff; font-size: 11px; text-align: center; }
+.aviso-prop { color: var(--azul); background: var(--azul-claro); padding: 6px 12px; border-radius: 6px; margin: 0 0 12px; }
+.grupo-prop { margin-bottom: 16px; }
+.motivo { font-size: 12px; max-width: 320px; }
+.fuente { max-width: 260px; overflow-wrap: anywhere; }
+.acciones-fila { white-space: nowrap; }
+.acciones-fila button + button { margin-left: 6px; }
 .lista-simple { list-style: none; padding: 0; margin: 0 0 8px; }
 .lista-simple li { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 6px 0; border-bottom: 1px solid var(--borde); }
 .lista-simple li:last-child { border-bottom: 0; }

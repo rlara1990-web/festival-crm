@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api, Filtro } from './api.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
 
 // Clave publicable: pensada para el navegador. La seguridad la dan las políticas RLS
 // (solo usuarios autenticados pueden leer o escribir).
@@ -56,6 +56,11 @@ export function crearApiSupabase(): Api {
       if (filtro?.organizacion_id) q = q.eq('organizacion_id', filtro.organizacion_id);
       return comprobar(await q) as Vinculo[];
     },
+    async propuestas(estado) {
+      let q = db.from('propuestas').select('*').order('obtenido_en');
+      if (estado) q = q.eq('estado', estado);
+      return comprobar(await q) as Propuesta[];
+    },
     async comentarios(registroIds) {
       if (registroIds.length === 0) return [];
       return comprobar(await db.from('comentarios').select('*').in('registro_id', registroIds).order('creado_en')) as Comentario[];
@@ -88,6 +93,12 @@ export function crearApiSupabase(): Api {
     },
     async crearVinculo(fila) {
       comprobar(await db.from('festival_organizacion').insert(fila));
+    },
+    async resolverPropuesta(id, estado) {
+      comprobar(await db.from('propuestas').update({ estado, resuelto_en: new Date().toISOString() }).eq('id', id));
+    },
+    async crearFuente(fila) {
+      comprobar(await db.from('fuentes_dato').insert(fila));
     },
     async borrarVinculo(f) {
       comprobar(await db.from('festival_organizacion').delete()

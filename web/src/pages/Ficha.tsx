@@ -22,6 +22,7 @@ interface Datos {
   comentarios: Comentario[];
   organizaciones: Organizacion[];
   vinculos: Vinculo[];
+  propuestas: number;
   /** Contactos de las organizaciones vinculadas */
   contactosOrg: Contacto[];
 }
@@ -41,7 +42,9 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
     const orgIds = [...new Set(vinculos.map((v) => v.organizacion_id))];
     const contactosOrg = (await Promise.all(orgIds.map((o) => api.contactos({ organizacion_id: o })))).flat();
     const comentarios = await api.comentarios([id, ...ediciones.map((e) => e.id), ...contactos.map((c) => c.id)]);
-    setD({ f, todos, ediciones, contactos, interacciones, comentarios, organizaciones, vinculos, contactosOrg });
+    const ids = new Set([id, ...ediciones.map((e) => e.id)]);
+    const propuestas = (await api.propuestas('pendiente')).filter((p) => p.registro_id && ids.has(p.registro_id)).length;
+    setD({ f, todos, ediciones, contactos, interacciones, comentarios, organizaciones, vinculos, contactosOrg, propuestas });
   }, [api, id]);
 
   useEffect(() => { cargar().catch((e: Error) => setError(e.message)); }, [cargar]);
@@ -87,6 +90,7 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
       {d.f.campos_pendientes.length > 0 && (
         <p className="pendientes">Missing: {d.f.campos_pendientes.map((p) => label(PENDIENTES, p)).join(' · ')}</p>
       )}
+      {d.propuestas > 0 && <p className="aviso-prop">Claude found {d.propuestas} new data point{d.propuestas > 1 ? 's' : ''} for this festival. <a href="#/propuestas">Review</a></p>}
       {aviso && <p className="ok">{aviso}</p>}
       {error && <p className="error">{error}</p>}
 

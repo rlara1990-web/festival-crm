@@ -1,6 +1,6 @@
 // Capa de datos. Hay dos implementaciones: Supabase (real) y demo (solo en desarrollo).
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
 
 export interface Filtro { festival_id?: string; organizacion_id?: string }
 
@@ -19,6 +19,7 @@ export interface Api {
   vinculos(filtro?: Filtro): Promise<Vinculo[]>;
   comentarios(registroIds: string[]): Promise<Comentario[]>;
   config(): Promise<PuntuacionConfig>;
+  propuestas(estado?: Propuesta['estado']): Promise<Propuesta[]>;
 
   /** Escrituras */
   actualizarFestival(id: string, cambios: Partial<Festival>): Promise<void>;
@@ -31,6 +32,9 @@ export interface Api {
   actualizarOrganizacion(id: string, cambios: Partial<Organizacion>): Promise<void>;
   crearVinculo(fila: Vinculo): Promise<void>;
   borrarVinculo(fila: Pick<Vinculo, 'festival_id' | 'organizacion_id' | 'rol'>): Promise<void>;
+  resolverPropuesta(id: string, estado: 'aceptada' | 'rechazada'): Promise<void>;
+  /** Registra de dónde viene un dato aceptado */
+  crearFuente(fila: { tabla: string; registro_id: string; campo: string | null; valor: string; url: string | null; metodo: 'manual' | 'scraping' }): Promise<void>;
 }
 
 let actual: Api | null = null;
