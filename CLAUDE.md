@@ -19,28 +19,17 @@ Usuario: Rodrigo (fundador de Moche Verde, junto con Zac). Idioma de la interfaz
 - Datos de contacto: guardar la fecha del primer contacto y permitir marcar baja en cualquier momento.
 - No incluir logística ni requisitos de cumplimiento en esta fase. Se verán en etapas posteriores de la postulación.
 
-## Modelo de datos (propuesta inicial)
-Festival:
-- nombre, país, ciudad, fechas (inicio y fin), duración en días
-- tipo: música, comida vegana, gastronomía u otro (puede no ser musical)
-- géneros musicales (lista)
-- perfil de público (local, turista, familias, etc.) y notas sobre el público
-- aforo esperado (rango numérico)
-- web, redes sociales y email de contacto
-- ventana de convocatoria para vendedores de comida: fecha de apertura, fecha de cierre, condiciones (exclusividad, comisión o coste de stand, prioridad a vendedores antiguos, si acepta food trucks), URL de la fuente y fecha de última revisión
-- puntuación de ajuste (0 a 100), calculada a partir de género, perfil de público, aforo y tipo de festival; los pesos se configuran en un solo lugar
-- resultados propios (si hubo participación previa): ventas y margen por edición
+## Modelo de datos (acordado el 24/11/2026)
+Fuente de verdad: `supabase/migrations/`. Resumen:
+- `festivales`: datos estables (nombre, país ISO, ciudad, tipo, géneros, perfil de público, web, formulario de contacto, redes, idioma de correo). `fuera_de_alcance` (desmarcable) y `campos_pendientes` (lo que falta revisar, nunca inventado).
+- `ediciones`: una por festival y año. Fechas (o `fechas_texto`), duración, aforo min/max, estado del pipeline, próxima acción, convocatoria (apertura, cierre, método, URL, exclusividad, coste, prioridad a antiguos, food trucks, fuente y fecha de revisión), puntuación con su detalle, y resultados propios (ventas, resultado en €, margen % calculado).
+- `contactos`: nombre, rol, email, teléfono, canal preferido, primer contacto, baja, `verificar` + motivo.
+- `interacciones`: tipo (correo enviado/recibido, mensaje en redes, formulario web, llamada, nota interna), fecha, asunto, cuerpo, enlace a Outlook, estado resultante (un trigger actualiza el estado de la edición).
+- `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). El cálculo está en `src/scoring/score.ts`.
+- `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
 
-Contacto (persona de contacto del festival):
-- nombre, rol, email, teléfono, canal preferido
-
-Interacción (historial):
-- tipo (correo enviado, correo recibido, mensaje en redes, llamada, nota interna)
-- fecha, asunto, cuerpo o resumen, enlace al correo en Outlook si existe
-- estado resultante
-
-Estados del festival (pipeline):
-- Por contactar → Contactado → Respondió → Interesado → Convocatoria enviada → Aceptado → Rechazado → Sin respuesta → Descartado
+Estados del pipeline: por_contactar, contactado, respondio, interesado, convocatoria_enviada, aceptado, rechazado (lo deciden ellos), sin_respuesta, descartado (lo decidimos nosotros).
+La edición 2026 es historial; el trabajo real es la edición 2027.
 
 ## Datos de partida y problemas conocidos
 El archivo `data/festivals_2026_original.csv` es la lista original que armamos el año pasado. Tiene problemas que hay que limpiar al importarla:
