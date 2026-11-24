@@ -2,11 +2,11 @@
 // no se incluye en la web publicada. Imita el trigger de estado de las interacciones.
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api } from './api.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
 
 interface DatosDemo {
   festivales: Festival[]; ediciones: Edicion[]; contactos: Contacto[]; interacciones: Interaccion[];
-  comentarios: Comentario[]; config: PuntuacionConfig; organizaciones: Organizacion[]; vinculos: Vinculo[];
+  comentarios: Comentario[]; config: PuntuacionConfig; organizaciones: Organizacion[]; vinculos: Vinculo[]; propuestas: Propuesta[];
 }
 
 export async function crearApiDemo(): Promise<Api> {
@@ -42,6 +42,9 @@ export async function crearApiDemo(): Promise<Api> {
     },
     async comentarios(ids) { return d.comentarios.filter((c) => ids.includes(c.registro_id)); },
     async config() { return d.config; },
+    async propuestas(estado) { return d.propuestas.filter((p) => !estado || p.estado === estado); },
+    async resolverPropuesta(i, estado) { parchear(d.propuestas, i, { estado, resuelto_en: ahora() }); },
+    async crearFuente() { /* en demo no se guarda la procedencia */ },
     async actualizarFestival(i, c) { parchear(d.festivales, i, c); },
     async actualizarEdicion(i, c) { parchear(d.ediciones, i, c); },
     async crearInteraccion(fila) {

@@ -1,5 +1,14 @@
 # Registro de cambios
 
+## 2026-11-24 (bandeja de revisión)
+
+### Añadido
+- Pestaña Review: propuestas de Claude agrupadas por festival, con valor actual, propuesto, fuente y motivo.
+  Aceptar copia el dato, registra la fuente en `fuentes_dato` y recalcula puntuación y pendientes; rechazar lo descarta.
+- Aviso en la ficha del festival cuando tiene propuestas pendientes; contador en la navegación.
+- `src/shared/propuestas.ts`: campos que se pueden proponer y su validación (con pruebas). La experiencia no se puede proponer.
+- `scripts/generar-propuestas.ts`: convierte un lote de datos encontrados (JSON en `data/propuestas/`) en SQL validado.
+
 ## 2026-11-24 (publicación)
 
 ### Añadido

@@ -110,6 +110,21 @@ export interface Vinculo {
   notas: string | null;
 }
 
+export interface Propuesta {
+  id: string;
+  tipo: 'dato' | 'festival_nuevo' | 'cambio_estado';
+  tabla: string | null; // festivales | ediciones | contactos
+  registro_id: string | null; // id de festival o edición (para contactos: festival)
+  campo: string | null; // para contactos: 'nuevo'
+  valor_propuesto: unknown;
+  valor_actual: unknown;
+  motivo: string | null;
+  fuente_url: string | null;
+  obtenido_en: string;
+  estado: 'pendiente' | 'aceptada' | 'rechazada';
+  resuelto_en: string | null;
+}
+
 export interface Comentario {
   id: string;
   tabla: string;
