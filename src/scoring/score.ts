@@ -84,8 +84,10 @@ export function calcularPuntuacion(e: EntradaPuntuacion, cfg: PuntuacionConfig):
     if (valor != null) total += valor * peso;
   }
 
+  // El tipo solo no dice nada del público: sin género, público ni aforo no hay puntuación.
+  const hayDatosDePublico = crudo.genero.valor != null || crudo.publico.valor != null || crudo.aforo.valor != null;
   return {
-    puntuacion: pesoDisponible > 0 ? Math.round(total) : null,
+    puntuacion: hayDatosDePublico ? Math.round(total) : null,
     incompleta: FACTORES.some((f) => crudo[f].valor == null),
     detalle,
   };

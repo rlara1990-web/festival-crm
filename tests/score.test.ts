@@ -61,6 +61,10 @@ describe('calcularPuntuacion', () => {
     expect(r.incompleta).toBe(true);
   });
 
+  it('con solo el tipo de festival no puntúa', () => {
+    expect(calcularPuntuacion({ ...base, tipo: 'musica' }, cfg).puntuacion).toBeNull();
+  });
+
   it('informa géneros sin afinidad configurada y los ignora', () => {
     const r = calcularPuntuacion({ ...base, generos: ['electronica', 'kpop'] }, cfg);
     expect(r.detalle.genero.valor).toBe(80);
