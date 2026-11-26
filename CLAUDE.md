@@ -115,6 +115,8 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Entorno "Festival CRM" con acceso a internet sin restricción (aprobado por Rodrigo el 24/11/2026). La herramienta WebFetch puede seguir sin resolver dominios: leer las webs con `curl` y extraer frases con `python3 -I scripts/frases_web.py pagina.html 'patrón'` (muchas webs de festivales guardan el texto dentro de scripts: buscar ahí también).
 - Cada lote va en `data/propuestas/lote-NN.json` y se convierte con `node scripts/generar-propuestas.ts` (valida y no duplica). Preferir la web oficial como fuente; si solo hay fuentes secundarias, decirlo en el motivo. Lo contradictorio no se propone.
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
+- Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
+- No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.

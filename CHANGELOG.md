@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 2026-11-26 (búsqueda de datos, tanda 2)
+
+### Añadido
+- Lote 3 de propuestas (`data/propuestas/lote-03.json`): 44 datos para los festivales 11–20, la mayoría de webs oficiales.
+
 ## 2026-11-24 (búsqueda de datos)
 
 ### Añadido
