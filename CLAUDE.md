@@ -111,6 +111,11 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
   Modo demo local sin Supabase: `npm run demo-data` y abrir `http://127.0.0.1:5173/?demo`.
 - Pruebas: `npm test`. Tipos: `npm run typecheck`.
 
+## Búsqueda de datos (etapa 2)
+- Entorno "Festival CRM" con acceso a internet sin restricción (aprobado por Rodrigo el 24/11/2026). La herramienta WebFetch puede seguir sin resolver dominios: leer las webs con `curl` y extraer frases con `python3 -I scripts/frases_web.py pagina.html 'patrón'` (muchas webs de festivales guardan el texto dentro de scripts: buscar ahí también).
+- Cada lote va en `data/propuestas/lote-NN.json` y se convierte con `node scripts/generar-propuestas.ts` (valida y no duplica). Preferir la web oficial como fuente; si solo hay fuentes secundarias, decirlo en el motivo. Lo contradictorio no se propone.
+- Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
+
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.
 2. Completar datos: Claude propone los datos que faltan con fuentes.

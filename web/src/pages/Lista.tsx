@@ -13,10 +13,10 @@ interface Fila {
   orgs: Organizacion[]; // organizaciones vinculadas
 }
 
-type Columna = 'nombre' | 'pais' | 'estado' | 'puntuacion' | 'generos' | 'acampada' | 'duracion' | 'aforo' | 'proxima' | 'experiencia' | 'pendientes';
+type Columna = 'nombre' | 'pais' | 'ciudad' | 'estado' | 'puntuacion' | 'generos' | 'acampada' | 'duracion' | 'aforo' | 'proxima' | 'experiencia' | 'pendientes';
 
 const COLUMNAS: { k: Columna; t: string }[] = [
-  { k: 'nombre', t: 'Festival' }, { k: 'pais', t: 'Country' }, { k: 'estado', t: 'Status' },
+  { k: 'nombre', t: 'Festival' }, { k: 'pais', t: 'Country' }, { k: 'ciudad', t: 'City' }, { k: 'estado', t: 'Status' },
   { k: 'puntuacion', t: 'Fit score' }, { k: 'generos', t: 'Genres' }, { k: 'acampada', t: 'Camping' },
   { k: 'duracion', t: 'Days' }, { k: 'aforo', t: 'Capacity' }, { k: 'proxima', t: 'Next action' },
   { k: 'experiencia', t: 'Our experience' }, { k: 'pendientes', t: 'Missing' },
@@ -44,6 +44,7 @@ function valorOrden(r: Fila, c: Columna): string | number {
   switch (c) {
     case 'nombre': return r.f.nombre.toLowerCase();
     case 'pais': return label(PAISES, r.f.pais);
+    case 'ciudad': return (r.f.ciudad ?? '\uffff').toLowerCase();
     case 'estado': return r.e ? Object.keys(ESTADOS).indexOf(r.e.estado) : 99;
     case 'puntuacion': return r.e?.puntuacion ?? -1;
     case 'generos': return r.f.generos.map((g) => label(GENEROS, g)).join(', ');
@@ -98,7 +99,7 @@ export function Lista({ api }: { api: Api }) {
   }, [filas, filtros, orden, asc]);
 
   const set = <K extends keyof Filtros>(k: K, v: Filtros[K]) => setFiltros((p) => ({ ...p, [k]: v }));
-  const clicOrden = (c: Columna) => { if (c === orden) setAsc(!asc); else { setOrden(c); setAsc(c === 'nombre' || c === 'pais' || c === 'proxima'); } };
+  const clicOrden = (c: Columna) => { if (c === orden) setAsc(!asc); else { setOrden(c); setAsc(c === 'nombre' || c === 'pais' || c === 'ciudad' || c === 'proxima'); } };
   const anio = filas?.[0]?.e?.anio;
 
   if (error) return <p className="error">{error}</p>;
@@ -142,6 +143,7 @@ export function Lista({ api }: { api: Api }) {
                 <td><a href={`#/festival/${f.id}`}>{f.nombre}</a>{f.fuera_de_alcance && <span className="etiqueta gris">Out of scope</span>}
                   {orgs.length > 0 && <div className="tenue via">via {orgs.map((o) => o.nombre).join(', ')}</div>}</td>
                 <td>{label(PAISES, f.pais)}</td>
+                <td>{f.ciudad ?? <span className="tenue">—</span>}</td>
                 <td>{e ? <span className={`estado estado-${e.estado}`}>{label(ESTADOS, e.estado)}</span> : '—'}</td>
                 <td><Puntuacion e={e} /></td>
                 <td className="generos">{f.generos.map((g) => label(GENEROS, g)).join(', ') || '—'}</td>
