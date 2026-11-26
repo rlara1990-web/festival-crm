@@ -11,7 +11,7 @@ Procedimiento que sigue Claude en cada revisión programada (10:00, 15:00 y 18:0
 - Resúmenes y notas en inglés.
 
 ## Pasos
-1. Estado: ejecutar `scripts/estado-revision.sql` con `execute_sql` y guardar el JSON (el objeto `estado`) en `estado.json` (scratchpad).
+1. Estado: ejecutar `scripts/estado-revision.sql` con `execute_sql` y guardar el JSON (el objeto `estado`) en `estado.json` (scratchpad) **completo y sin cambios**, aunque no haya correos: nunca recortarlo ni escribirlo a mano. El script lo rechaza si está incompleto.
 2. Ventana: desde `ultima_revision` (o 30 días atrás si es nula) hasta ahora.
 3. Correos: `outlook_email_search` con `folderName` "Sent Items" y luego "Inbox", `afterDateTime` = inicio de la ventana, paginando con `offset` hasta cubrir `totalResultCount`.
 4. `mensajes.json`: un objeto por correo con `id` (id de Outlook), `conversation_id` (si se conoce), `direccion` (`enviado` / `recibido`), `fecha` (ISO), `de`, `para` (to + cc), `asunto`. Para recibidos de un festival (dominio o dirección conocidos), leer el correo y añadir `resumen` (1–2 frases en inglés) y `estado_sugerido` (`en_conversacion`, `reunion_agendada`, `convocatoria_enviada`, `aceptado`, `rechazado`; por defecto `en_conversacion`).

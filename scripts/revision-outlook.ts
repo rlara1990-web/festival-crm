@@ -41,6 +41,10 @@ const host = (u: string | null) => { try { return u ? new URL(u).hostname.replac
 interface Destino { festival_id: string | null; organizacion_id: string | null; contacto_id: string | null; por: 'email' | 'dominio'; direccion: string }
 
 export function revisar(est: Estado, mensajes: Mensaje[]) {
+  // El estado debe ser el resultado completo de scripts/estado-revision.sql, nunca una versión recortada
+  if (!est.festivales?.length || !est.ediciones?.length || !Array.isArray(est.contactos) || !Array.isArray(est.ids_registrados)) {
+    throw new Error('estado.json incompleto: copia sin cambios el JSON completo de scripts/estado-revision.sql');
+  }
   const porEmail = new Map(est.contactos.filter((c) => c.email && !c.baja_en).map((c) => [c.email!.toLowerCase(), c]));
   // Dominios de festivales (contactos y web), sin correos gratuitos
   const porDominio = new Map<string, Set<string>>();

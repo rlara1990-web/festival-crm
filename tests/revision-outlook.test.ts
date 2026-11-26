@@ -70,6 +70,10 @@ describe('revisar', () => {
     expect(r.sql.filter((s) => s.includes('correo_enviado'))).toHaveLength(0);
   });
 
+  it('rechaza un estado recortado', () => {
+    expect(() => revisar({ ...estado, festivales: [] }, [])).toThrow(/incompleto/);
+  });
+
   it('aplica los plazos vencidos aunque no haya correos', () => {
     const r = revisar(estado, []);
     expect(r.informe.join()).toMatch(/Waking Life → recontacto_1/);
