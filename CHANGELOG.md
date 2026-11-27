@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 2026-11-27 (búsqueda de datos, tanda 5)
+
+### Añadido
+- Lote 5 de propuestas (`data/propuestas/lote-05.json`): 26 datos para 10 festivales portugueses.
+
 ## 2026-11-27 (etapa 4: festivales y eventos nuevos)
 
 ### Añadido
