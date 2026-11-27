@@ -10,7 +10,7 @@ export const CONFIG_INICIAL: PuntuacionConfig = {
     reggae_dub: 70, pop: 65, hip_hop: 60, afrobeat: 60, psicodelia: 60, jazz: 60,
     opera: 40, blues: 40, industrial: 35, rock: 35, steampunk: 30, punk: 20, metal: 10,
   },
-  afinidad_publico: { turista_internacional: 90, mixto: 75, familias: 60, joven_local: 50, nicho_subcultura: 15 },
+  afinidad_publico: { turista_internacional: 90, mixto: 75, familias: 60, joven_local: 30, nicho_subcultura: 15 },
   afinidad_tipo: { musica: 90, otro: 40, gastronomia: 30, comida_vegana: 30 },
   valores_acampada: { si: 100, no: 40 },
   tramos_duracion: [

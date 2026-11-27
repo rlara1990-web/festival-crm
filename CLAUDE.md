@@ -83,7 +83,7 @@ Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos 
 |---|---|---|
 | Experiencia propia (la más reciente) | 30 | muy positiva 100, positiva 80, neutra 50, negativa 25, muy negativa 0 |
 | Género (media de sus géneros) | 20 | world 90, indie 85, electrónica 80, hippie 75, cultural 75, latino 75, alternativo 75, reggae/dub 70, pop 65, hip hop 60, afrobeat 60, psicodelia 60, jazz 60, ópera 40, blues 40, industrial 35, rock 35, steampunk 30, punk 20, metal 10 |
-| Público | 15 | turista internacional 90, mixto 75, familias 60, joven local 50, nicho subcultura 15 |
+| Público | 15 | turista internacional 90, mixto 75, familias 60, joven local 30 (antes 50; bajado el 27/11/2026 por la experiencia de Somnii), nicho subcultura 15 |
 | Acampada | 10 | sí 100, no 40 |
 | Duración | 10 | 1 día 30, 2 días 50, 3 días 70, 4–5 días 85, 6+ días 100 |
 | Tipo | 10 | música 90, otro 40, gastronomía 30, comida vegana 30 |

@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 2026-11-27 (puntuación)
+
+### Cambiado
+- Público "joven local": 50 → 30 (en Supabase y en `src/scoring/default-config.ts`), por la experiencia de RFM Somnii. Ningún festival tenía ese público asignado, así que no cambió ninguna puntuación existente.
+
 ## 2026-11-27 (búsqueda de datos, tanda 5)
 
 ### Añadido
