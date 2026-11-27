@@ -90,6 +90,10 @@ Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos 
 | Aforo | 5 | <5k 40, 5–10k 60, 10–30k 90, 30–60k 80, >60k 65 |
 
 Referencias de Rodrigo: Waking Life y Paredes de Coura (música con acampada) fueron los mejores; Basilar es pequeño pero internacional y bien curado como Waking Life.
+Señales de mal ajuste (Rodrigo, 27/11/2026), para evaluar festivales parecidos al proponer o comentar:
+- RFM Somnii: en realidad era una fiesta electrónica de playa con público joven local, no un festival. Malas ventas y operación tediosa.
+- Vilar de Mouros: público de rock / pop punk que no encaja con nuestra comida.
+Al proponer festivales nuevos o datos, decir en el motivo si un festival se parece a estos (p. ej. fiestas de playa con público joven: Medusa, Weekend Beach, Arenal Sound, Sumol Summer Fest). No se investigan más datos de Somnii ni Vilar de Mouros.
 
 ## Datos acordados para la carga inicial
 - Experiencia 2026: Waking Life muy positiva; Paredes de Coura muy positiva; NOS Primavera Sound positiva; RFM Somnii muy negativa (malas ventas, en la playa, operación tediosa); Vilar de Mouros muy negativa (público no adecuado: rock, pop punk). Los cinco en estado Aceptado en 2026.
@@ -117,7 +121,7 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
 - Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
 - Lote 4 (27/11/2026): 10 festivales portugueses (Insomnia, Boom, Him Dub, Lisb-On, Elétrico, Vinculum, Yard, Jardins do Marquês, Afronation; Sacred Soul sin resultados), 36 propuestas.
-- Lote 5 (27/11/2026): 10 festivales portugueses más (Kalorama, Coala, Sudoeste, Festival F, Mares Vivas, Rock in Rio, North, Avante, Guimarães Jazz, OperaFest), 26 propuestas. Rock in Rio no tiene edición en 2027 (siguiente en 2028); Marés Vivas pasó a Matosinhos como MEO Marés; Sudoeste sin confirmar. Pendientes de investigar en PT: Sonic Blast, Out Fest, RFM Somnii, Festival Vapor, Vilar de Mouros, DHB Portugal.
+- Lote 5 (27/11/2026): 10 festivales portugueses más (Kalorama, Coala, Sudoeste, Festival F, Mares Vivas, Rock in Rio, North, Avante, Guimarães Jazz, OperaFest), 26 propuestas. Rock in Rio no tiene edición en 2027 (siguiente en 2028); Marés Vivas pasó a Matosinhos como MEO Marés; Sudoeste sin confirmar. Pendientes de investigar en PT: Sonic Blast, Out Fest, Festival Vapor, DHB Portugal (Somnii y Vilar de Mouros no hace falta).
 - No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Nuevos festivales y eventos (etapa 4)
