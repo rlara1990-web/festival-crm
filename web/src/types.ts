@@ -135,3 +135,28 @@ export interface Comentario {
   resuelto: boolean;
   creado_en: string;
 }
+
+/** Pedido a Claude desde el CRM; se procesa en la siguiente revisión programada */
+export interface Solicitud {
+  id: string;
+  tipo: 'completar_datos' | 'preparar_correo' | 'preparar_recontacto' | 'otro';
+  festival_id: string | null;
+  edicion_id: string | null;
+  detalle: string | null;
+  estado: 'pendiente' | 'en_proceso' | 'hecha' | 'descartada';
+  resultado: string | null;
+  creado_en: string;
+  procesado_en: string | null;
+}
+
+/** Archivo en Supabase Storage (bucket "documentos"), general o de un festival */
+export interface Documento {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  ruta_storage: string;
+  tipo_mime: string | null;
+  tamano_bytes: number | null;
+  festival_id: string | null;
+  creado_en: string;
+}

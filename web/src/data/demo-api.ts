@@ -2,7 +2,8 @@
 // no se incluye en la web publicada. Imita el trigger de estado de las interacciones.
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api } from './api.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
+import { rutaDocumento } from './documentos.ts';
 
 interface DatosDemo {
   festivales: Festival[]; ediciones: Edicion[]; contactos: Contacto[]; interacciones: Interaccion[];
@@ -14,6 +15,10 @@ export async function crearApiDemo(): Promise<Api> {
   const cargar = modulos['./demo-data.ts'];
   if (!cargar) throw new Error('Demo data missing: run `npm run demo-data` first.');
   const d = structuredClone(((await cargar()) as { DATOS: DatosDemo }).DATOS);
+  const solicitudes: Solicitud[] = [];
+  const documentos: Documento[] = [];
+  const archivos = new Map<string, string>(); // ruta → object URL
+  const fuentes: string[] = [];
   let usuario: string | null = 'demo@mocheverde.com';
   const id = () => crypto.randomUUID();
   const ahora = () => new Date().toISOString();
@@ -44,7 +49,24 @@ export async function crearApiDemo(): Promise<Api> {
     async config() { return d.config; },
     async propuestas(estado) { return d.propuestas.filter((p) => !estado || p.estado === estado); },
     async resolverPropuesta(i, estado) { parchear(d.propuestas, i, { estado, resuelto_en: ahora() }); },
-    async crearFuente() { /* en demo no se guarda la procedencia */ },
+    async crearFuente(f) { fuentes.push(JSON.stringify([f.tabla, f.registro_id, f.campo, f.valor])); },
+    async existeFuente(f) { return fuentes.includes(JSON.stringify([f.tabla, f.registro_id, f.campo, f.valor])); },
+    async solicitudes(f) { return solicitudes.filter((x) => x.festival_id === f).sort((a, b) => b.creado_en.localeCompare(a.creado_en)); },
+    async crearSolicitud(fila) { solicitudes.push({ ...fila, id: id(), estado: 'pendiente', resultado: null, creado_en: ahora(), procesado_en: null }); },
+    async descartarSolicitud(i) { const x = solicitudes.find((y) => y.id === i); if (x?.estado === 'pendiente') x.estado = 'descartada'; },
+    async crearComentario(fila) { d.comentarios.push({ ...fila, id: id(), autor: 'equipo', resuelto: false, creado_en: ahora() }); },
+    async resolverComentario(i) { parchear(d.comentarios, i, { resuelto: true }); },
+    async documentos(f) {
+      return documentos.filter((x) => f === undefined || x.festival_id === f).sort((a, b) => b.creado_en.localeCompare(a.creado_en));
+    },
+    async enlaceDocumento(x) { return archivos.get(x.ruta_storage) ?? '#'; },
+    async subirDocumento(archivo, datos) {
+      const ruta = rutaDocumento(archivo.name, datos.festival_id);
+      archivos.set(ruta, URL.createObjectURL(archivo));
+      documentos.push({ id: id(), nombre: archivo.name, descripcion: datos.descripcion, ruta_storage: ruta, tipo_mime: archivo.type || null,
+        tamano_bytes: archivo.size, festival_id: datos.festival_id, creado_en: ahora() });
+    },
+    async borrarDocumento(x) { const i = documentos.findIndex((y) => y.id === x.id); if (i >= 0) documentos.splice(i, 1); },
     async actualizarFestival(i, c) { parchear(d.festivales, i, c); },
     async actualizarEdicion(i, c) { parchear(d.ediciones, i, c); },
     async crearInteraccion(fila) {
