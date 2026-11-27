@@ -121,7 +121,8 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
 - Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
 - Lote 4 (27/11/2026): 10 festivales portugueses (Insomnia, Boom, Him Dub, Lisb-On, Elétrico, Vinculum, Yard, Jardins do Marquês, Afronation; Sacred Soul sin resultados), 36 propuestas.
-- Lote 5 (27/11/2026): 10 festivales portugueses más (Kalorama, Coala, Sudoeste, Festival F, Mares Vivas, Rock in Rio, North, Avante, Guimarães Jazz, OperaFest), 26 propuestas. Rock in Rio no tiene edición en 2027 (siguiente en 2028); Marés Vivas pasó a Matosinhos como MEO Marés; Sudoeste sin confirmar. Pendientes de investigar en PT: Sonic Blast, Out Fest, Festival Vapor, DHB Portugal (Somnii y Vilar de Mouros no hace falta).
+- Lote 5 (27/11/2026): 10 festivales portugueses más (Kalorama, Coala, Sudoeste, Festival F, Mares Vivas, Rock in Rio, North, Avante, Guimarães Jazz, OperaFest), 26 propuestas. Rock in Rio no tiene edición en 2027 (siguiente en 2028); Marés Vivas pasó a Matosinhos como MEO Marés; Sudoeste sin confirmar.
+- Lote 6 (27/11/2026): Sonic Blast, Out Fest, Festival Vapor, DHB Portugal, 15 propuestas. Con esto, todos los portugueses de la lista están investigados (salvo Somnii y Vilar de Mouros, por decisión de Rodrigo). España queda para más adelante (8 festivales sin investigar).
 - No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Nuevos festivales y eventos (etapa 4)

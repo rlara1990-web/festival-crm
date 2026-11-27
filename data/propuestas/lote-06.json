@@ -1,0 +1,35 @@
+[
+  { "festival": "Sonic Blast", "tabla": "festivales", "campo": "ciudad", "valor": "Vila Praia de Âncora (Caminha)",
+    "fuente_url": "https://riffipedia.fandom.com/wiki/SonicBlast_Moledo", "motivo": "Moved from Moledo to Praia da Duna dos Caldeirões, Âncora, in 2022 (now 'SonicBlast Festival'). Secondary source." },
+  { "festival": "Sonic Blast", "tabla": "festivales", "campo": "web_url", "valor": "https://sonicblastfestival.com/",
+    "fuente_url": "https://sonicblastfestival.com/2025/05/08/molchat-doma", "motivo": "Official website." },
+  { "festival": "Sonic Blast", "tabla": "ediciones", "campo": "fecha_inicio", "valor": "2027-08-12",
+    "fuente_url": "https://www.theblackplanet.org/sonicblast-fest-2026-opens-today/", "motivo": "Dates for 2027 (12–14 August) announced on the opening day of the 2026 edition. Secondary source; not yet on the official site." },
+  { "festival": "Sonic Blast", "tabla": "ediciones", "campo": "fecha_fin", "valor": "2027-08-14",
+    "fuente_url": "https://www.theblackplanet.org/sonicblast-fest-2026-opens-today/", "motivo": "End date (12–14 August 2027). Secondary source." },
+  { "festival": "Sonic Blast", "tabla": "festivales", "campo": "generos", "valor": ["rock", "psicodelia"],
+    "fuente_url": "https://riffipedia.fandom.com/wiki/SonicBlast_Moledo", "motivo": "Stoner / psychedelic rock festival (listed in the Stoner Rock Wiki). Rock audience, similar to Vilar de Mouros: likely poor fit." },
+
+  { "festival": "Barreiro International Music Festival Out Fest", "tabla": "festivales", "campo": "ciudad", "valor": "Barreiro",
+    "fuente_url": "https://outfest.pt/eng/info/", "motivo": "Official site: OUT.FEST takes place in Barreiro, organised by the non-profit OUT.RA, 30+ performances in several venues." },
+  { "festival": "Barreiro International Music Festival Out Fest", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Early October 2027 (to confirm; 2026: 1–4 Oct)",
+    "fuente_url": "https://outfest.pt/eng/?p=2150", "motivo": "22nd edition ran 1–4 October 2026 (official site). 2027 not announced." },
+  { "festival": "Barreiro International Music Festival Out Fest", "tabla": "ediciones", "campo": "duracion_dias", "valor": 4,
+    "fuente_url": "https://outfest.pt/eng/?p=2150", "motivo": "Four days (1–4 October in 2026)." },
+
+  { "festival": "Festival Vapor", "tabla": "festivales", "campo": "ciudad", "valor": "Entroncamento (Museu Nacional Ferroviário)",
+    "fuente_url": "https://www.rtp.pt/noticias/cultura/festival-vapor-leva-ao-entroncamento-espetaculos-de-rua-cinema-e-projetos-com-a-comunidade_n1669836", "motivo": "Held at the National Railway Museum, organised by the Entroncamento municipality and the museum." },
+  { "festival": "Festival Vapor", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Mid-September 2027 (to confirm; 2025: 12–14 Sep)",
+    "fuente_url": "https://echoboomer.pt/?p=268995", "motivo": "2025: 12–14 September; usually mid-September. About 5,000 visitors over three days in one edition (FEDECRAIL). No 2026/2027 dates found." },
+
+  { "festival": "DHB Portugal", "tabla": "festivales", "campo": "ciudad", "valor": "Almada (Costa da Caparica)",
+    "fuente_url": "https://www.technoairlines.com/blog/dhb-portugal-2026-photos-costa-da-caparica", "motivo": "House / deep house festival on the beach at Costa da Caparica (Praia do Irmão in 2024–2025, new coastal site in 2026). Beach electronic party: similar to RFM Somnii, though with a more international crowd." },
+  { "festival": "DHB Portugal", "tabla": "festivales", "campo": "generos", "valor": ["electronica"],
+    "fuente_url": "https://www.ticketfairy.com/word/2025/09/05/jamie-jones-dennis-cruz-and-more-confirmed-for-dhb-portugal-2025", "motivo": "House, afro, organic and minimal; line-ups with Jamie Jones, Dennis Cruz." },
+  { "festival": "DHB Portugal", "tabla": "festivales", "campo": "perfil_publico", "valor": ["mixto"],
+    "fuente_url": "https://ground.news/article/dhb-portugal-returns-for-third-edition-at-costa-da-caparica", "motivo": "Attendees from over 40 nationalities (2025 report), alongside a local crowd." },
+  { "festival": "DHB Portugal", "tabla": "ediciones", "campo": "aforo_max", "valor": 6000,
+    "fuente_url": "https://www.technoairlines.com/blog/dhb-portugal-2026-photos-costa-da-caparica", "motivo": "About 6,000 people at the 2026 edition (photo recap). Secondary source." },
+  { "festival": "DHB Portugal", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Mid/late September 2027 (to confirm; 2026: 18–20 Sep)",
+    "fuente_url": "https://www.beatportal.com/events/pegstgp-dhb-portugal-2026", "motivo": "Held in the second half of September every year (2024: 21–22, 2025: 19–21, 2026: 18–20). 2027 not announced." }
+]
