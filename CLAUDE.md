@@ -46,7 +46,7 @@ Idiomas:
 12. Nuevos festivales y eventos: Claude los propone con fuentes; si se aceptan entran como Por contactar.
 
 ### Mensaje base para los correos
-Correo de acercamiento: presentarnos, explicar el concepto y la comida, que entregamos un buen producto, que no hacemos esperar a los clientes (quieren aprovechar el tiempo viendo a sus artistas) sin descuidar el servicio. Incluir web, Instagram y teléfono de contacto (ver "Datos de Moche Verde para los correos").
+Correo de acercamiento: presentarnos, explicar el concepto y la comida, que entregamos un buen producto, que no hacemos esperar a los clientes (quieren aprovechar el tiempo viendo a sus artistas) sin descuidar el servicio, y la sostenibilidad (envases biodegradables, cubiertos de madera, ingredientes locales cuando es posible). Incluir web, Instagram y teléfono de contacto (ver "Datos de Moche Verde para los correos").
 
 ## Pipeline (estados de cada edición)
 ```
