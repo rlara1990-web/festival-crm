@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 2026-11-27 (búsqueda de datos, tanda 4)
+
+### Añadido
+- Lote 4 de propuestas (`data/propuestas/lote-04.json`): 36 datos para 9 festivales portugueses. Sacred Soul: sin resultados en ninguna fuente.
+
 ## 2026-11-27 (mejoras de la web)
 
 ### Añadido

@@ -116,6 +116,7 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Cada lote va en `data/propuestas/lote-NN.json` y se convierte con `node scripts/generar-propuestas.ts` (valida y no duplica). Preferir la web oficial como fuente; si solo hay fuentes secundarias, decirlo en el motivo. Lo contradictorio no se propone.
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
 - Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
+- Lote 4 (27/11/2026): 10 festivales portugueses (Insomnia, Boom, Him Dub, Lisb-On, Elétrico, Vinculum, Yard, Jardins do Marquês, Afronation; Sacred Soul sin resultados), 36 propuestas.
 - No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Etapas
