@@ -1,5 +1,17 @@
 # Registro de cambios
 
+## 2026-11-26 (etapa 3: revisión de Outlook)
+
+### Añadido
+- `src/shared/seguimiento.ts`: reglas de recontacto (2 días hábiles → Recontacto 1 → Recontacto 2 → Sin respuesta).
+- `scripts/revision-outlook.ts` y `scripts/estado-revision.sql`: detectan correos enviados y respuestas de festivales (por dirección del contacto o dominio), registran interacciones, aplican plazos vencidos y dejan propuestas de cambio de estado para las respuestas. Los avisos automáticos (noreply) se registran sin propuesta; los contactos dados de baja se ignoran.
+- `docs/revision-outlook.md`: procedimiento de las revisiones programadas.
+
+## 2026-11-26 (búsqueda de datos, tanda 2)
+
+### Añadido
+- Lote 3 de propuestas (`data/propuestas/lote-03.json`): 44 datos para los festivales 11–20, la mayoría de webs oficiales.
+
 ## 2026-11-24 (búsqueda de datos)
 
 ### Añadido

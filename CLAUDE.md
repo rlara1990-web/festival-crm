@@ -115,6 +115,8 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Entorno "Festival CRM" con acceso a internet sin restricción (aprobado por Rodrigo el 24/11/2026). La herramienta WebFetch puede seguir sin resolver dominios: leer las webs con `curl` y extraer frases con `python3 -I scripts/frases_web.py pagina.html 'patrón'` (muchas webs de festivales guardan el texto dentro de scripts: buscar ahí también).
 - Cada lote va en `data/propuestas/lote-NN.json` y se convierte con `node scripts/generar-propuestas.ts` (valida y no duplica). Preferir la web oficial como fuente; si solo hay fuentes secundarias, decirlo en el motivo. Lo contradictorio no se propone.
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
+- Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
+- No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.
@@ -129,12 +131,13 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 
 ## Outlook (verificado el 24/11/2026)
 - El conector de Microsoft 365 está conectado a info@mocheverde.com (cuenta correcta).
-- Permisos actuales solo de lectura (Mail.Read, Calendars.Read). Para crear borradores y eventos hace falta habilitar la escritura del conector (Mail.ReadWrite / Calendars.ReadWrite). Hasta entonces solo funciona la detección de enviados y respuestas.
+- Escritura habilitada el 26/11/2026 (consentimiento de administrador en Entra para "M365 MCP Server for Claude"): Mail.ReadWrite y Calendars.ReadWrite para borradores y eventos. El consentimiento incluye Mail.Send, pero Claude nunca envía: las herramientas de envío deben estar bloqueadas en claude.ai.
+- El tenant de Moche Verde se administra en entra.microsoft.com con info@mocheverde.com (usar ventana privada si redirige a otro tenant).
 - Revisiones en hora de Lisboa.
 - Los borradores de recontacto se preparan solo cuando Rodrigo o Zac lo piden, no automáticamente.
 
 ## Pendiente de decidir
-- Habilitar escritura en el conector de Microsoft 365 (necesario para la etapa 3).
+- Nada por ahora.
 
 ## Preferencias de trabajo
 - Antes de cambiar la estructura de datos, explicar el cambio y su motivo.
