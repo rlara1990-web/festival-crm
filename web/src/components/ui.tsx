@@ -1,6 +1,7 @@
 // Piezas de interfaz compartidas por las fichas de festival y de organización.
 import type { ReactNode } from 'react';
 import type { Comentario } from '../types.ts';
+import { Nota } from './Notas.tsx';
 
 export type Guardar = (accion: () => Promise<void>, mensaje?: string) => Promise<void>;
 export type Coms = (registro: string, campo: string | null) => Comentario[];
@@ -34,10 +35,11 @@ export function Comentarios({ lista }: { lista: Comentario[] }) {
   return <span className="comentario" title={texto} aria-label={`Comment: ${texto}`}>{lista.length}</span>;
 }
 
-export function Dato({ t, children, comentarios }: { t: string; children: ReactNode; comentarios?: Comentario[] }) {
+/** c = [tabla, registro, campo]: permite comentar el dato (ver Notas.tsx) */
+export function Dato({ t, children, comentarios, c }: { t: string; children: ReactNode; comentarios?: Comentario[]; c?: [string, string, string | null] }) {
   return (
     <div className="dato">
-      <dt>{t}{comentarios && <Comentarios lista={comentarios} />}</dt>
+      <dt>{t}{c ? <Nota tabla={c[0]} registro={c[1]} campo={c[2]} /> : comentarios && <Comentarios lista={comentarios} />}</dt>
       <dd>{children}</dd>
     </div>
   );

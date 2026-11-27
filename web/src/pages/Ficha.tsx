@@ -12,6 +12,9 @@ import {
 } from '../components/ui.tsx';
 import { SeccionContactos } from '../components/Contactos.tsx';
 import { SeccionHistorial } from '../components/Historial.tsx';
+import { ComentariosCtx, Nota, type CtxComentarios } from '../components/Notas.tsx';
+import { SeccionPedirClaude } from '../components/PedirClaude.tsx';
+import { SeccionDocumentos } from '../components/Documentos.tsx';
 
 interface Datos {
   f: Festival;
@@ -75,8 +78,14 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
   const gestora = orgGestora ? { org: orgGestora, contacto: d.contactosOrg.find((c) => c.organizacion_id === orgGestora.id && c.principal && !c.baja_en) } : undefined;
   const coms = (registro: string, campo: string | null) =>
     d.comentarios.filter((c) => c.registro_id === registro && c.campo === campo && !c.resuelto);
+  const ctxComentarios: CtxComentarios = {
+    lista: d.comentarios.filter((c) => !c.resuelto),
+    crear: async (tabla, registro, campo, texto) => { await api.crearComentario({ tabla, registro_id: registro, campo, texto }); await cargar(); },
+    resolver: async (cid) => { await api.resolverComentario(cid); await cargar(); },
+  };
 
   return (
+    <ComentariosCtx.Provider value={ctxComentarios}>
     <article className="ficha">
       <a href="#/" className="volver">← All festivals</a>
       <div className="titulo-fila">
@@ -84,7 +93,7 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
         <div className="titulo-chips">
           {objetivo && <span className={`estado estado-${objetivo.estado}`}>{label(ESTADOS, objetivo.estado)}</span>}
           {d.f.fuera_de_alcance && <span className="etiqueta gris">Out of scope</span>}
-          <Comentarios lista={coms(d.f.id, null)} />
+          <Nota tabla="festivales" registro={d.f.id} campo={null} />
         </div>
       </div>
       {d.f.campos_pendientes.length > 0 && (
@@ -105,11 +114,14 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
             organizaciones={d.organizaciones} guardar={guardar} api={api} />
         </div>
         <aside>
+          <SeccionPedirClaude api={api} festivalId={d.f.id} edicionId={objetivo?.id ?? null} />
           {objetivo && <SeccionPuntuacion e={objetivo} />}
           <SeccionPasadas pasadas={pasadas} guardar={guardar} api={api} coms={coms} />
+          <SeccionDocumentos api={api} festivalId={d.f.id} />
         </aside>
       </div>
     </article>
+    </ComentariosCtx.Provider>
   );
 }
 
@@ -156,7 +168,7 @@ function SeccionTemporada({ e, f, contactos, gestora, guardar, api, coms }: {
   return (
     <Seccion titulo={`Season ${e.anio}`} editando={editando} setEditando={setEditando} guardar={enviar}>
       <div className="estado-cambio">
-        <span>Status: <b className={`estado estado-${e.estado}`}>{label(ESTADOS, e.estado)}</b><Comentarios lista={coms(e.id, 'estado')} /></span>
+        <span>Status: <b className={`estado estado-${e.estado}`}>{label(ESTADOS, e.estado)}</b><Nota tabla="ediciones" registro={e.id} campo="estado" /></span>
         <select value={nuevoEstado} onChange={(x) => setNuevoEstado(x.target.value)}>
           <option value="">Change status…</option>
           {Object.entries(ESTADOS).filter(([k]) => k !== e.estado).map(([k, t]) => (
@@ -171,24 +183,24 @@ function SeccionTemporada({ e, f, contactos, gestora, guardar, api, coms }: {
 
       {!editando ? (
         <dl className="datos">
-          <Dato t="Next action">{e.proxima_accion ? <>{e.proxima_accion_fecha && <b>{fechaTexto(e.proxima_accion_fecha)} · </b>}{e.proxima_accion}</> : '—'}</Dato>
+          <Dato t="Next action" c={['ediciones', e.id, 'proxima_accion']}>{e.proxima_accion ? <>{e.proxima_accion_fecha && <b>{fechaTexto(e.proxima_accion_fecha)} · </b>}{e.proxima_accion}</> : '—'}</Dato>
           <Dato t="Who to contact">{gestora
             ? <>Via <a href={`#/organizacion/${gestora.org.id}`}>{gestora.org.nombre}</a>{gestora.contacto && <>: {gestora.contacto.nombre ? `${gestora.contacto.nombre} · ` : ''}{gestora.contacto.email ?? gestora.contacto.telefono}</>}</>
             : principal ? principal.email ?? principal.telefono : <span className="tenue">Not chosen</span>}</Dato>
-          <Dato t="Dates">{e.fecha_inicio ? `${fechaTexto(e.fecha_inicio)} – ${fechaTexto(e.fecha_fin)}` : e.fechas_texto ?? '—'}</Dato>
-          <Dato t="Days">{e.duracion_dias ?? '—'}</Dato>
-          <Dato t="Capacity">{aforoTexto(e.aforo_min, e.aforo_max)}</Dato>
+          <Dato t="Dates" c={['ediciones', e.id, 'fecha_inicio']}>{e.fecha_inicio ? `${fechaTexto(e.fecha_inicio)} – ${fechaTexto(e.fecha_fin)}` : e.fechas_texto ?? '—'}</Dato>
+          <Dato t="Days" c={['ediciones', e.id, 'duracion_dias']}>{e.duracion_dias ?? '—'}</Dato>
+          <Dato t="Capacity" c={['ediciones', e.id, 'aforo_max']}>{aforoTexto(e.aforo_min, e.aforo_max)}</Dato>
           {e.recontactos > 0 && <Dato t="Follow-ups sent">{e.recontactos}{e.proximo_recontacto && ` · next ${fechaTexto(e.proximo_recontacto)}`}</Dato>}
-          <Dato t="Applications open">{fechaTexto(e.conv_apertura)}</Dato>
-          <Dato t="Applications close">{fechaTexto(e.conv_cierre)}</Dato>
-          <Dato t="How to apply">{label(METODOS_CONV, e.conv_metodo)}</Dato>
-          <Dato t="Application link"><Enlace url={e.conv_url} /></Dato>
-          <Dato t="Food trucks accepted" comentarios={coms(e.id, 'acepta_food_trucks')}>{siNo(e.acepta_food_trucks)}</Dato>
-          <Dato t="Returning vendors first">{siNo(e.prioridad_antiguos)}</Dato>
-          <Dato t="Exclusivity">{siNo(e.exclusividad)}</Dato>
-          <Dato t="Fee">{label(COSTES, e.coste_tipo)}{e.coste_notas && ` · ${e.coste_notas}`}</Dato>
-          <Dato t="Application notes">{e.conv_notas ?? '—'}</Dato>
-          <Dato t="Checked on">{fechaTexto(e.conv_revisado_en)}{e.conv_fuente_url && <> · <Enlace url={e.conv_fuente_url} /></>}</Dato>
+          <Dato t="Applications open" c={['ediciones', e.id, 'conv_apertura']}>{fechaTexto(e.conv_apertura)}</Dato>
+          <Dato t="Applications close" c={['ediciones', e.id, 'conv_cierre']}>{fechaTexto(e.conv_cierre)}</Dato>
+          <Dato t="How to apply" c={['ediciones', e.id, 'conv_metodo']}>{label(METODOS_CONV, e.conv_metodo)}</Dato>
+          <Dato t="Application link" c={['ediciones', e.id, 'conv_url']}><Enlace url={e.conv_url} /></Dato>
+          <Dato t="Food trucks accepted" c={['ediciones', e.id, 'acepta_food_trucks']}>{siNo(e.acepta_food_trucks)}</Dato>
+          <Dato t="Returning vendors first" c={['ediciones', e.id, 'prioridad_antiguos']}>{siNo(e.prioridad_antiguos)}</Dato>
+          <Dato t="Exclusivity" c={['ediciones', e.id, 'exclusividad']}>{siNo(e.exclusividad)}</Dato>
+          <Dato t="Fee" c={['ediciones', e.id, 'coste_tipo']}>{label(COSTES, e.coste_tipo)}{e.coste_notas && ` · ${e.coste_notas}`}</Dato>
+          <Dato t="Application notes" c={['ediciones', e.id, 'conv_notas']}>{e.conv_notas ?? '—'}</Dato>
+          <Dato t="Checked on" c={['ediciones', e.id, 'conv_revisado_en']}>{fechaTexto(e.conv_revisado_en)}{e.conv_fuente_url && <> · <Enlace url={e.conv_fuente_url} /></>}</Dato>
         </dl>
       ) : (
         <div className="form">
@@ -257,20 +269,20 @@ function SeccionFestival({ f, todos, guardar, api, coms }: { f: Festival; todos:
     <Seccion titulo="Festival" editando={editando} setEditando={setEditando} guardar={enviar}>
       {!editando ? (
         <dl className="datos">
-          <Dato t="Country">{label(PAISES, f.pais)}</Dato>
-          <Dato t="City">{f.ciudad ?? '—'}</Dato>
-          <Dato t="Event type">{label(TIPOS, f.tipo)}</Dato>
-          <Dato t="Camping">{siNo(f.acampada)}</Dato>
-          <Dato t="Genres">{f.generos.map((g) => label(GENEROS, g)).join(', ') || '—'}</Dato>
-          <Dato t="Audience">{f.perfil_publico.map((p) => label(PUBLICOS, p)).join(', ') || '—'}</Dato>
-          <Dato t="Audience notes">{f.notas_publico ?? '—'}</Dato>
-          <Dato t="Similar to">{parecidos.length ? parecidos.map((p, i) => <span key={p.id}>{i > 0 && ', '}<a href={`#/festival/${p.id}`}>{p.nombre}</a></span>) : '—'}</Dato>
-          <Dato t="Website"><Enlace url={f.web_url} /></Dato>
-          <Dato t="Contact form"><Enlace url={f.formulario_contacto_url} /></Dato>
-          <Dato t="Instagram"><Enlace url={f.instagram_url} /></Dato>
-          <Dato t="Email language">{label(IDIOMAS, f.idioma_correo)}</Dato>
-          <Dato t="In scope">{f.fuera_de_alcance ? 'No (outside Portugal/Spain)' : 'Yes'}</Dato>
-          <Dato t="Notes" comentarios={coms(f.id, 'notas')}><span className="multilinea">{f.notas ?? '—'}</span></Dato>
+          <Dato t="Country" c={['festivales', f.id, 'pais']}>{label(PAISES, f.pais)}</Dato>
+          <Dato t="City" c={['festivales', f.id, 'ciudad']}>{f.ciudad ?? '—'}</Dato>
+          <Dato t="Event type" c={['festivales', f.id, 'tipo']}>{label(TIPOS, f.tipo)}</Dato>
+          <Dato t="Camping" c={['festivales', f.id, 'acampada']}>{siNo(f.acampada)}</Dato>
+          <Dato t="Genres" c={['festivales', f.id, 'generos']}>{f.generos.map((g) => label(GENEROS, g)).join(', ') || '—'}</Dato>
+          <Dato t="Audience" c={['festivales', f.id, 'perfil_publico']}>{f.perfil_publico.map((p) => label(PUBLICOS, p)).join(', ') || '—'}</Dato>
+          <Dato t="Audience notes" c={['festivales', f.id, 'notas_publico']}>{f.notas_publico ?? '—'}</Dato>
+          <Dato t="Similar to" c={['festivales', f.id, 'parecido_a']}>{parecidos.length ? parecidos.map((p, i) => <span key={p.id}>{i > 0 && ', '}<a href={`#/festival/${p.id}`}>{p.nombre}</a></span>) : '—'}</Dato>
+          <Dato t="Website" c={['festivales', f.id, 'web_url']}><Enlace url={f.web_url} /></Dato>
+          <Dato t="Contact form" c={['festivales', f.id, 'formulario_contacto_url']}><Enlace url={f.formulario_contacto_url} /></Dato>
+          <Dato t="Instagram" c={['festivales', f.id, 'instagram_url']}><Enlace url={f.instagram_url} /></Dato>
+          <Dato t="Email language" c={['festivales', f.id, 'idioma_correo']}>{label(IDIOMAS, f.idioma_correo)}</Dato>
+          <Dato t="In scope" c={['festivales', f.id, 'fuera_de_alcance']}>{f.fuera_de_alcance ? 'No (outside Portugal/Spain)' : 'Yes'}</Dato>
+          <Dato t="Notes" c={['festivales', f.id, 'notas']}><span className="multilinea">{f.notas ?? '—'}</span></Dato>
         </dl>
       ) : (
         <div className="form">
@@ -355,13 +367,13 @@ function Pasada({ e, guardar, api, coms }: { e: Edicion; guardar: Guardar; api: 
       <div className="pasada-cab">
         <b>{e.anio}</b>
         <span className={`estado estado-${e.estado}`}>{label(ESTADOS, e.estado)}</span>
-        <Comentarios lista={coms(e.id, 'estado')} />
+        <Nota tabla="ediciones" registro={e.id} campo="estado" />
         {!editando && <button className="btn-sec chico" onClick={() => setEditando(true)}>Edit</button>}
       </div>
       <p className="tenue">{e.fecha_inicio ? `${fechaTexto(e.fecha_inicio)} – ${fechaTexto(e.fecha_fin)}` : e.fechas_texto ?? 'Dates unknown'} · {aforoTexto(e.aforo_min, e.aforo_max)}</p>
       {!editando ? (
         e.experiencia
-          ? <p><span className={`exp exp-${e.experiencia}`}>{label(EXPERIENCIAS, e.experiencia)}</span>{e.comentario_experiencia && <> {e.comentario_experiencia}</>}</p>
+          ? <p><Nota tabla="ediciones" registro={e.id} campo="experiencia" /> <span className={`exp exp-${e.experiencia}`}>{label(EXPERIENCIAS, e.experiencia)}</span>{e.comentario_experiencia && <> {e.comentario_experiencia}</>}</p>
           : <p className="tenue">No experience recorded.</p>
       ) : (
         <div className="form">
