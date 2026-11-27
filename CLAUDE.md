@@ -59,7 +59,7 @@ Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta 
 
 ## Modelo de datos
 Fuente de verdad: `supabase/migrations/` (cinco migraciones del 24/11/2026, aplicadas en Supabase).
-Acceso: registro de usuarios desactivado en Supabase; un único usuario compartido, info@mocheverde.com. Las políticas RLS solo dejan pasar a los emails de `es_equipo()` (para añadir a alguien, nueva migración que actualice esa lista). Lo marcado **(v2)** ya está implementado en la base; falta la interfaz.
+Acceso: registro de usuarios desactivado en Supabase; un único usuario compartido, info@mocheverde.com. Las políticas RLS solo dejan pasar a los emails de `es_equipo()` (para añadir a alguien, nueva migración que actualice esa lista). Lo marcado **(v2)** está implementado en la base y en la interfaz (comentarios, Ask Claude y documentos desde el 27/11/2026).
 Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones, 2 comentarios, 72 fuentes. La carga se niega a ejecutarse si ya hay festivales.
 
 - `festivales`: nombre, país ISO, ciudad, tipo, géneros, perfil de público, web, formulario de contacto, redes, idioma de correo, `fuera_de_alcance`, `campos_pendientes`, notas. **(v2)** `acampada` (sí / no / desconocido), `parecido_a` (lista de festivales, solo referencia, no puntúa).

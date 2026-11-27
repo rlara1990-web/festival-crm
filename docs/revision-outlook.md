@@ -17,7 +17,11 @@ Procedimiento que sigue Claude en cada revisión programada (10:00, 15:00 y 18:0
 4. `mensajes.json`: un objeto por correo con `id` (id de Outlook), `conversation_id` (si se conoce), `direccion` (`enviado` / `recibido`), `fecha` (ISO), `de`, `para` (to + cc), `asunto`. Para recibidos de un festival (dominio o dirección conocidos), leer el correo y añadir `resumen` (1–2 frases en inglés) y `estado_sugerido` (`en_conversacion`, `reunion_agendada`, `convocatoria_enviada`, `aceptado`, `rechazado`; por defecto `en_conversacion`).
 5. `node scripts/revision-outlook.ts estado.json mensajes.json salida.sql > informe.md`.
 6. Aplicar `salida.sql` con `execute_sql` (es una transacción; los ids ya registrados no se duplican).
-7. Solicitudes pendientes (`solicitudes` con estado pendiente): procesarlas si es posible; si requieren escritura en Outlook y no hay permiso, dejarlas pendientes.
+7. Solicitudes del botón "Ask Claude" (`solicitudes` con `estado = 'pendiente'`, de la más antigua a la más nueva). Al empezar cada una, ponerla en `en_proceso`; al terminar, `hecha` con `resultado` (1–2 frases en inglés, se ve en la ficha) y `procesado_en = now()`. Si no se puede, dejarla `pendiente` con `resultado` explicando por qué.
+   - `completar_datos`: buscar los datos que faltan del festival (método de CLAUDE.md, "Búsqueda de datos") y dejarlos como propuestas. Si la búsqueda es larga, hacer como máximo 2 solicitudes de este tipo por revisión.
+   - `preparar_correo`: borrador en Outlook (`outlook_create_draft`) al contacto principal (o a la gestora de comida si la hay), en el idioma del festival, con el mensaje base de `ajustes.mensaje_base` y los datos de Moche Verde, algo propio del festival y la nota de `detalle` si la hay. En `resultado`, el asunto y que está en Borradores.
+   - `preparar_recontacto`: borrador de seguimiento breve, respondiendo en el mismo hilo si se conoce el último correo enviado (`outlook_create_reply_draft`).
+   - `otro`: hacer lo que pide `detalle` si está dentro de las reglas; si no, explicarlo en `resultado`.
 8. Terminar con el informe (en español, breve). Si no hubo novedades, decirlo en una línea.
 
 ## Seguimiento

@@ -1,5 +1,16 @@
 # Registro de cambios
 
+## 2026-11-27 (mejoras de la web)
+
+### Añadido
+- Ask Claude en la ficha: pedir datos, primer correo, recontacto u otra cosa, con nota opcional; se ve el estado y el resultado. Claude los procesa en cada revisión programada (`docs/revision-outlook.md`, paso 7).
+- Comentarios en cualquier dato de la ficha (temporada, festival, temporadas pasadas, email de contactos): marca con el número, globo para leer, añadir y resolver.
+- Documentos: pestaña Documents (todos, generales o por festival) y sección en la ficha. Archivos en Supabase Storage (bucket privado), máximo 50 MB.
+
+### Cambiado
+- Aceptar propuestas se puede reintentar sin duplicar contactos, fuentes ni notas de cambio de estado (pruebas en `tests/aceptar-propuesta.test.ts`).
+- Mensaje base de los correos: sostenibilidad.
+
 ## 2026-11-26 (etapa 3: revisión de Outlook)
 
 ### Añadido
