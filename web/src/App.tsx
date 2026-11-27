@@ -25,7 +25,7 @@ export function App() {
   const [error, setError] = useState<string | null>(null);
   const [pendientes, setPendientes] = useState(0);
   const ruta = useRuta();
-  const contarPendientes = () => { if (api) api.propuestas('pendiente').then((p) => setPendientes(p.filter((x) => x.tipo !== 'festival_nuevo').length)).catch(() => {}); };
+  const contarPendientes = () => { if (api) api.propuestas('pendiente').then((p) => setPendientes(p.length)).catch(() => {}); };
   useEffect(contarPendientes, [api, usuario, ruta]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {

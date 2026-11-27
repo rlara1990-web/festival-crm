@@ -82,6 +82,12 @@ export function crearApiSupabase(): Api {
     async crearContacto(fila) {
       comprobar(await db.from('contactos').insert(fila));
     },
+    async crearFestival(fila) {
+      return (comprobar(await db.from('festivales').insert(fila).select('id').single()) as { id: string }).id;
+    },
+    async crearEdicion(fila) {
+      return (comprobar(await db.from('ediciones').insert(fila).select('id').single()) as { id: string }).id;
+    },
     async actualizarContacto(id, cambios) {
       comprobar(await db.from('contactos').update(cambios).eq('id', id));
     },

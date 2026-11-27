@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Api } from '../data/api.ts';
-import { aceptarPropuesta, festivalDePropuesta } from '../data/propuestas.ts';
-import { CAMPOS_PROPONIBLES, type ContactoPropuesto } from '../../../src/shared/propuestas.ts';
+import { aceptarFestivalNuevo, aceptarPropuesta, festivalDePropuesta } from '../data/propuestas.ts';
+import { CAMPOS_PROPONIBLES, type ContactoPropuesto, type FestivalNuevo } from '../../../src/shared/propuestas.ts';
 import type { Edicion, Festival, Propuesta } from '../types.ts';
-import { ESTADOS, GENEROS, METODOS_CONV, PUBLICOS, TIPOS, fechaTexto, label, siNo } from '../labels.ts';
+import { ESTADOS, GENEROS, METODOS_CONV, PAISES, PUBLICOS, TIPOS, aforoTexto, fechaTexto, label, siNo } from '../labels.ts';
 import { Enlace } from '../components/ui.tsx';
 
 export function formatearValor(campo: string, v: unknown): string {
@@ -24,13 +24,14 @@ export function formatearValor(campo: string, v: unknown): string {
 }
 
 export function Propuestas({ api, alCambiar }: { api: Api; alCambiar?: () => void }) {
-  const [datos, setDatos] = useState<{ props: Propuesta[]; festivales: Festival[]; ediciones: Edicion[] } | null>(null);
+  const [datos, setDatos] = useState<{ props: Propuesta[]; nuevos: Propuesta[]; festivales: Festival[]; ediciones: Edicion[] } | null>(null);
+  const [creados, setCreados] = useState<{ id: string; nombre: string }[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
     const [props, festivales, ediciones] = await Promise.all([api.propuestas('pendiente'), api.festivales(), api.ediciones()]);
-    setDatos({ props: props.filter((p) => p.tipo !== 'festival_nuevo'), festivales, ediciones });
+    setDatos({ props: props.filter((p) => p.tipo !== 'festival_nuevo'), nuevos: props.filter((p) => p.tipo === 'festival_nuevo'), festivales, ediciones });
   }, [api]);
   useEffect(() => { cargar().catch((e: Error) => setError(e.message)); }, [cargar]);
 
@@ -40,7 +41,10 @@ export function Propuestas({ api, alCambiar }: { api: Api; alCambiar?: () => voi
     setOcupado(ps.map((p) => p.id).join());
     try {
       for (const p of ps) {
-        if (aceptar) await aceptarPropuesta(api, p, datos.ediciones);
+        if (aceptar && p.tipo === 'festival_nuevo') {
+          const id = await aceptarFestivalNuevo(api, p);
+          setCreados((c) => [...c, { id, nombre: (p.valor_propuesto as FestivalNuevo).nombre }]);
+        } else if (aceptar) await aceptarPropuesta(api, p, datos.ediciones);
         else await api.resolverPropuesta(p.id, 'rechazada');
       }
       await cargar();
@@ -67,11 +71,21 @@ export function Propuestas({ api, alCambiar }: { api: Api; alCambiar?: () => voi
     <section>
       <div className="titulo-fila">
         <h1>Review</h1>
-        <span className="tenue">{datos.props.length} pending</span>
+        <span className="tenue">{datos.props.length + datos.nuevos.length} pending</span>
       </div>
       <p className="tenue">Data Claude found online, with its source. Accept to copy it into the festival; reject to discard it. Nothing changes until you accept.</p>
       {error && <p className="error">{error}</p>}
-      {datos.props.length === 0 && <p className="tarjeta tenue">Nothing to review.</p>}
+      {creados.length > 0 && <p className="ok">Added to the list as To contact: {creados.map((c, i) => <span key={c.id}>{i > 0 && ', '}<a href={`#/festival/${c.id}`}>{c.nombre}</a></span>)}</p>}
+      {datos.props.length === 0 && datos.nuevos.length === 0 && <p className="tarjeta tenue">Nothing to review.</p>}
+      {datos.nuevos.length > 0 && (
+        <section className="tarjeta seccion">
+          <div className="seccion-cab"><h2>New festivals &amp; events <span className="tenue">· {datos.nuevos.length}</span></h2></div>
+          <p className="tenue">Events Claude found that are not in the list yet. Accept to add them as To contact (season 2027).</p>
+          <div className="nuevos">
+            {datos.nuevos.map((p) => <TarjetaNuevo key={p.id} p={p} ocupado={!!ocupado} resolver={resolver} />)}
+          </div>
+        </section>
+      )}
       {[...grupos.entries()].sort((a, b) => nombre(a[0]).localeCompare(nombre(b[0]))).map(([fid, ps]) => (
         <section key={fid} className="tarjeta seccion grupo-prop">
           <div className="seccion-cab">
@@ -108,5 +122,32 @@ export function Propuestas({ api, alCambiar }: { api: Api; alCambiar?: () => voi
         </section>
       ))}
     </section>
+  );
+}
+
+function TarjetaNuevo({ p, ocupado, resolver }: { p: Propuesta; ocupado: boolean; resolver: (ps: Propuesta[], aceptar: boolean) => void }) {
+  const v = p.valor_propuesto as FestivalNuevo;
+  const fechas = v.fecha_inicio ? `${fechaTexto(v.fecha_inicio)} – ${fechaTexto(v.fecha_fin ?? null)}` : v.fechas_texto ?? 'Dates unknown';
+  const datos: [string, string][] = [
+    ['Where', [v.ciudad, label(PAISES, v.pais)].filter(Boolean).join(', ')],
+    ['Type', label(TIPOS, v.tipo)],
+    ['Dates 2027', fechas],
+    ['Capacity', aforoTexto(v.aforo_min ?? null, v.aforo_max ?? null)],
+    ['Genres', (v.generos ?? []).map((g) => label(GENEROS, g)).join(', ') || '—'],
+    ['Audience', (v.perfil_publico ?? []).map((g) => label(PUBLICOS, g)).join(', ') || '—'],
+    ['Camping', siNo(v.acampada ?? null)],
+    ['Contact', v.contacto ? formatearValor('contactos.nuevo', v.contacto) : '—'],
+  ];
+  return (
+    <article className="nuevo">
+      <h3>{v.nombre}</h3>
+      <p>{v.por_que}</p>
+      <dl className="datos">{datos.map(([t, x]) => <div key={t} className="dato"><dt>{t}</dt><dd>{x}</dd></div>)}</dl>
+      <p className="tenue">{v.web_url && <><Enlace url={v.web_url} /> · </>}Source: <Enlace url={p.fuente_url} /></p>
+      <div className="acciones">
+        <button className="btn-sec" disabled={ocupado} onClick={() => resolver([p], false)}>Reject</button>
+        <button disabled={ocupado} onClick={() => resolver([p], true)}>Accept</button>
+      </div>
+    </article>
   );
 }

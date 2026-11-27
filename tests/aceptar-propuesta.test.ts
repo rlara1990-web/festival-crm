@@ -63,3 +63,47 @@ describe('aceptarPropuesta se puede reintentar sin duplicar', () => {
     expect(f.fuentes).toHaveLength(1);
   });
 });
+
+import { aceptarFestivalNuevo } from '../web/src/data/propuestas.ts';
+import type { Festival } from '../web/src/types.ts';
+
+describe('aceptarFestivalNuevo', () => {
+  function api2(fallarEn?: string) {
+    const festivales: Festival[] = []; const ediciones: Edicion[] = []; const contactos: Contacto[] = []; const fuentes: string[] = [];
+    let fallo = fallarEn;
+    const api = {
+      festivales: async () => festivales.map((f) => ({ ...f })),
+      ediciones: async (fid?: string) => ediciones.filter((e) => !fid || e.festival_id === fid),
+      contactos: async () => contactos, vinculos: async () => [], config: async () => CONFIG_INICIAL,
+      crearFestival: async (f: Festival) => { const id = `f${festivales.length}`; festivales.push({ ...f, campos_pendientes: f.campos_pendientes ?? [], id }); return id; },
+      crearEdicion: async (e: Edicion) => { ediciones.push({ ...e, id: `e${ediciones.length}` }); if (fallo === 'crearEdicion') { fallo = undefined; throw new Error('Failed to fetch'); } return 'e'; },
+      crearContacto: async (c: Contacto) => { contactos.push({ ...c, id: 'c' }); },
+      existeFuente: async (f: object) => fuentes.includes(JSON.stringify(f)),
+      crearFuente: async (f: { tabla: string; registro_id: string; campo: string | null; valor: string }) => { fuentes.push(JSON.stringify({ tabla: f.tabla, registro_id: f.registro_id, campo: f.campo, valor: f.valor })); },
+      resolverPropuesta: async () => {}, actualizarFestival: async () => {}, actualizarEdicion: async () => {},
+    } as unknown as Api;
+    return { api, festivales, ediciones, contactos, fuentes };
+  }
+  const p: Propuesta = { ...base, id: 'n1', tipo: 'festival_nuevo', tabla: null, registro_id: null, campo: null,
+    valor_propuesto: { nombre: 'Web Summit', pais: 'PT', tipo: 'otro', ciudad: 'Lisboa', aforo_max: 70000, fecha_inicio: '2027-11-08', fecha_fin: '2027-11-11',
+      contacto: { email: 'Partners@WebSummit.com' }, por_que: 'Large international audience.' } };
+
+  it('crea festival, temporada 2027 por contactar, contacto y fuente', async () => {
+    const f = api2();
+    await aceptarFestivalNuevo(f.api, p);
+    expect(f.festivales).toHaveLength(1);
+    expect(f.festivales[0]).toMatchObject({ nombre: 'Web Summit', pais: 'PT', idioma_correo: 'pt' });
+    expect(f.ediciones[0]).toMatchObject({ anio: 2027, estado: 'por_contactar', aforo_max: 70000 });
+    expect(f.contactos[0]!.email).toBe('partners@websummit.com');
+    expect(f.fuentes).toHaveLength(1);
+  });
+
+  it('reintento tras un corte no duplica', async () => {
+    const f = api2('crearEdicion');
+    await expect(aceptarFestivalNuevo(f.api, p)).rejects.toThrow();
+    await aceptarFestivalNuevo(f.api, p);
+    expect(f.festivales).toHaveLength(1);
+    expect(f.ediciones).toHaveLength(1);
+    expect(f.contactos).toHaveLength(1);
+  });
+});

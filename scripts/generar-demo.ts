@@ -39,5 +39,11 @@ datos.propuestas.push(
   prop(3, 'contactos', waking.id, 'nuevo', { email: 'food@example.org', rol: 'Food vendors' }, null, 'Demo: contact for food vendors.'),
   prop(4, 'ediciones', waking27.id, 'aforo_max', 12000, 10000, 'Demo: capacity announced for 2027.'),
 );
+// Festivales nuevos de ejemplo: los dos primeros del lote nuevos-01
+const nuevos = JSON.parse(readFileSync('data/propuestas/nuevos-01.json', 'utf8')) as { fuente_url: string; por_que: string }[];
+nuevos.slice(0, 2).forEach(({ fuente_url, ...v }, i) => datos.propuestas.push({
+  id: `00000000-0000-4000-8000-00000000010${i}`, tipo: 'festival_nuevo', tabla: null, registro_id: null, campo: null, valor_propuesto: v,
+  valor_actual: null, motivo: v.por_que, fuente_url, obtenido_en: ahora, estado: 'pendiente', resuelto_en: null,
+}));
 writeFileSync('web/src/data/demo-data.ts', `// Generado por scripts/generar-demo.ts. No editar.\nexport const DATOS = ${JSON.stringify(datos)};\n`);
 console.log(`Demo: ${datos.festivales.length} festivales`);

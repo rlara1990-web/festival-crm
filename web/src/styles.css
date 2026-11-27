@@ -221,3 +221,11 @@ table.docs { width: 100%; border-collapse: collapse; }
 table.docs th, table.docs td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gris-claro); vertical-align: top; }
 button.enlace { background: none; border: 0; padding: 0; color: var(--verde); font: inherit; cursor: pointer; text-align: left; }
 button.enlace:hover { text-decoration: underline; }
+
+/* Festivales nuevos en Review */
+.nuevos { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; }
+.nuevo { border: 1px solid var(--borde); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.nuevo h3 { margin: 0; font-size: 16px; }
+.nuevo p { margin: 0; }
+.nuevo .datos { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.nuevo .acciones { justify-content: flex-end; margin-top: auto; }
