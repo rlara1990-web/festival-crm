@@ -183,3 +183,41 @@ main { padding: 20px; max-width: 1400px; margin: 0 auto; }
   main { padding: 16px; }
   .barra { padding: 10px 16px; }
 }
+
+/* Comentarios (Notas.tsx) */
+.nota { position: relative; display: inline-block; }
+button.comentario { border: 0; font: inherit; font-size: 11px; font-weight: 700; padding: 0 5px; }
+.nota-nueva {
+  margin-left: 6px; width: 18px; height: 18px; padding: 0; border-radius: 9px; border: 1px dashed var(--borde);
+  background: transparent; color: var(--tenue); font-size: 12px; line-height: 1; opacity: 0; cursor: pointer;
+}
+dt:hover .nota-nueva, .titulo-chips:hover .nota-nueva, .estado-cambio:hover .nota-nueva, .pasada:hover .nota-nueva,
+td:hover .nota-nueva, .nota-nueva:focus-visible { opacity: 1; }
+@media (hover: none) { .nota-nueva { opacity: .6; } }
+.nota-globo {
+  position: absolute; z-index: 20; top: 24px; left: 0; width: min(320px, 80vw); display: flex; flex-direction: column; gap: 8px;
+  padding: 10px; background: #fff; border: 1px solid var(--borde); border-radius: 8px; box-shadow: 0 6px 20px rgb(0 0 0 / .12);
+  font-weight: 400; color: var(--texto); text-transform: none; letter-spacing: 0; white-space: normal;
+}
+.nota-item { display: flex; flex-direction: column; gap: 4px; padding-bottom: 8px; border-bottom: 1px solid var(--gris-claro); }
+.nota-item button { align-self: flex-start; }
+.nota-autor { font-size: 12px; color: var(--tenue); }
+.nota-globo textarea { min-height: 60px; width: 100%; }
+.nota-globo .acciones { justify-content: flex-end; }
+
+/* Ask Claude */
+.pedir { display: flex; flex-direction: column; gap: 8px; }
+.pedir textarea { min-height: 60px; }
+.pedir button { align-self: flex-start; }
+.solicitudes { list-style: none; margin: 12px 0 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.solicitudes li { border-top: 1px solid var(--gris-claro); padding-top: 8px; display: flex; flex-direction: column; gap: 4px; }
+.solicitudes li button { margin-left: 8px; }
+.sol-pendiente, .sol-en_proceso { background: var(--ambar-claro); color: var(--ambar); }
+.sol-hecha { background: var(--verde-claro); color: var(--verde); }
+.sol-descartada { background: var(--gris-claro); color: var(--tenue); }
+
+/* Documentos */
+table.docs { width: 100%; border-collapse: collapse; }
+table.docs th, table.docs td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--gris-claro); vertical-align: top; }
+button.enlace { background: none; border: 0; padding: 0; color: var(--verde); font: inherit; cursor: pointer; text-align: left; }
+button.enlace:hover { text-decoration: underline; }

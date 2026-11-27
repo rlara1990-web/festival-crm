@@ -1,7 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api, Filtro } from './api.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
+import { rutaDocumento } from './documentos.ts';
 
 // Clave publicable: pensada para el navegador. La seguridad la dan las políticas RLS
 // (solo usuarios autenticados pueden leer o escribir).
@@ -99,6 +100,55 @@ export function crearApiSupabase(): Api {
     },
     async crearFuente(fila) {
       comprobar(await db.from('fuentes_dato').insert(fila));
+    },
+    async solicitudes(festivalId) {
+      return comprobar(await db.from('solicitudes').select('*').eq('festival_id', festivalId).order('creado_en', { ascending: false })) as Solicitud[];
+    },
+    async crearSolicitud(fila) {
+      comprobar(await db.from('solicitudes').insert(fila));
+    },
+    async descartarSolicitud(id) {
+      comprobar(await db.from('solicitudes').update({ estado: 'descartada' }).eq('id', id).eq('estado', 'pendiente'));
+    },
+    async crearComentario(fila) {
+      comprobar(await db.from('comentarios').insert({ ...fila, autor: 'equipo' }));
+    },
+    async resolverComentario(id) {
+      comprobar(await db.from('comentarios').update({ resuelto: true }).eq('id', id));
+    },
+    async documentos(festivalId) {
+      let q = db.from('documentos').select('*').order('creado_en', { ascending: false });
+      if (festivalId === null) q = q.is('festival_id', null);
+      else if (festivalId) q = q.eq('festival_id', festivalId);
+      return comprobar(await q) as Documento[];
+    },
+    async enlaceDocumento(d) {
+      const { data, error } = await db.storage.from('documentos').createSignedUrl(d.ruta_storage, 3600);
+      if (error) throw new Error(error.message);
+      return data.signedUrl;
+    },
+    async subirDocumento(archivo, datos) {
+      const ruta = rutaDocumento(archivo.name, datos.festival_id);
+      const { error } = await db.storage.from('documentos').upload(ruta, archivo, { contentType: archivo.type || undefined });
+      if (error) throw new Error(error.message);
+      const r = await db.from('documentos').insert({
+        nombre: archivo.name, descripcion: datos.descripcion, ruta_storage: ruta, tipo_mime: archivo.type || null,
+        tamano_bytes: archivo.size, festival_id: datos.festival_id,
+      });
+      if (r.error) { await db.storage.from('documentos').remove([ruta]); throw new Error(r.error.message); }
+    },
+    async borrarDocumento(d) {
+      const { error } = await db.storage.from('documentos').remove([d.ruta_storage]);
+      if (error) throw new Error(error.message);
+      comprobar(await db.from('documentos').delete().eq('id', d.id));
+    },
+    async existeFuente(f) {
+      let q = db.from('fuentes_dato').select('id', { count: 'exact', head: true })
+        .eq('tabla', f.tabla).eq('registro_id', f.registro_id).eq('valor', f.valor);
+      q = f.campo == null ? q.is('campo', null) : q.eq('campo', f.campo);
+      const { count, error } = await q;
+      if (error) throw new Error(error.message);
+      return (count ?? 0) > 0;
     },
     async borrarVinculo(f) {
       comprobar(await db.from('festival_organizacion').delete()

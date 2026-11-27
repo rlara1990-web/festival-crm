@@ -3,6 +3,7 @@ import { useState } from 'react';
 import type { Api } from '../data/api.ts';
 import type { Contacto } from '../types.ts';
 import { CANALES, fechaTexto, label } from '../labels.ts';
+import { Nota } from './Notas.tsx';
 import { Comentarios, Opciones, Seccion, hoy, vacio, type Coms, type Guardar } from './ui.tsx';
 
 export interface Dueno { festival_id: string | null; organizacion_id: string | null }
@@ -31,7 +32,7 @@ export function SeccionContactos({ dueno, contactos, guardar, api, coms, titulo 
               <tr key={c.id} className={c.baja_en ? 'baja' : ''}>
                 <td><input type="radio" name={`principal-${registro}`} checked={c.principal} disabled={!!c.baja_en} onChange={() => hacerPrincipal(c)} /></td>
                 <td>{c.nombre ?? <span className="tenue">Generic inbox</span>}{c.rol && <small className="tenue"> · {c.rol}</small>}</td>
-                <td>{c.email ?? '—'}{c.verificar && <span className="etiqueta aviso" title={c.motivo_verificar ?? ''}>Verify</span>}<Comentarios lista={coms(c.id, 'email')} /></td>
+                <td>{c.email ?? '—'}{c.verificar && <span className="etiqueta aviso" title={c.motivo_verificar ?? ''}>Verify</span>}<Nota tabla="contactos" registro={c.id} campo="email" /></td>
                 <td>{c.telefono ?? '—'}</td>
                 <td>{label(CANALES, c.canal_preferido)}</td>
                 <td>{c.baja_en

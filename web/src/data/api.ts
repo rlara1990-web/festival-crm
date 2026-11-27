@@ -1,6 +1,6 @@
 // Capa de datos. Hay dos implementaciones: Supabase (real) y demo (solo en desarrollo).
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
-import type { Comentario, Contacto, Edicion, Festival, Interaccion, Organizacion, Propuesta, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
 
 export interface Filtro { festival_id?: string; organizacion_id?: string }
 
@@ -20,6 +20,13 @@ export interface Api {
   comentarios(registroIds: string[]): Promise<Comentario[]>;
   config(): Promise<PuntuacionConfig>;
   propuestas(estado?: Propuesta['estado']): Promise<Propuesta[]>;
+  solicitudes(festivalId: string): Promise<Solicitud[]>;
+  /** festivalId: un festival; null: solo generales; undefined: todos */
+  documentos(festivalId?: string | null): Promise<Documento[]>;
+  /** Enlace temporal para abrir o descargar un documento */
+  enlaceDocumento(d: Documento): Promise<string>;
+  /** ¿Ya existe esta fuente? (para no duplicar al reintentar) */
+  existeFuente(fila: { tabla: string; registro_id: string; campo: string | null; valor: string }): Promise<boolean>;
 
   /** Escrituras */
   actualizarFestival(id: string, cambios: Partial<Festival>): Promise<void>;
@@ -32,6 +39,12 @@ export interface Api {
   actualizarOrganizacion(id: string, cambios: Partial<Organizacion>): Promise<void>;
   crearVinculo(fila: Vinculo): Promise<void>;
   borrarVinculo(fila: Pick<Vinculo, 'festival_id' | 'organizacion_id' | 'rol'>): Promise<void>;
+  crearComentario(fila: Pick<Comentario, 'tabla' | 'registro_id' | 'campo' | 'texto'>): Promise<void>;
+  resolverComentario(id: string): Promise<void>;
+  crearSolicitud(fila: Pick<Solicitud, 'tipo' | 'festival_id' | 'edicion_id' | 'detalle'>): Promise<void>;
+  descartarSolicitud(id: string): Promise<void>;
+  subirDocumento(archivo: File, datos: { festival_id: string | null; descripcion: string | null }): Promise<void>;
+  borrarDocumento(d: Documento): Promise<void>;
   resolverPropuesta(id: string, estado: 'aceptada' | 'rechazada'): Promise<void>;
   /** Registra de dónde viene un dato aceptado */
   crearFuente(fila: { tabla: string; registro_id: string; campo: string | null; valor: string; url: string | null; metodo: 'manual' | 'scraping' }): Promise<void>;
