@@ -1,5 +1,10 @@
 # Registro de cambios
 
+## 2026-11-27 (contactos de eventos nuevos)
+
+### Añadido
+- `data/propuestas/lote-07-contactos.json`: 10 contactos propuestos para 9 de los 14 eventos nuevos.
+
 ## 2026-11-27 (búsqueda de datos, tanda 6)
 
 ### Añadido

@@ -131,6 +131,8 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - En Review aparecen como tarjetas; al aceptar se crea el festival, su temporada 2027 en Por contactar, el contacto y la fuente.
 - Lote nuevos-01 (27/11/2026): 14 eventos en Portugal (Andanças, Festival MED, Web Summit, Sónar Lisboa, Mercado Medieval de Óbidos, Viagem Medieval, Ageas Cooljazz, Sumol Summer Fest, Iminente, Out Jazz, Festival da Comida Continente, O Sol da Caparica, Brunch Electronik, MotoGP Portimão). Descartados: Bons Sons (bienal, próxima 2028), Super Bock Super Rock (ya no es festival de verano), Comic Con (sin edición en 2027), Milhões de Festa y Festival Forte (sin ediciones recientes).
 
+- Contactos de los 14 aceptados (`data/propuestas/lote-07-contactos.json`, 27/11/2026): 10 contactos para 9 eventos, cargados directamente en Supabase (el generador solo conoce los festivales del CSV). Sin contacto público: Festival MED (lo organiza la Câmara de Loulé), Web Summit (vendedores elegidos vía su partner hub), Iminente, Festival da Comida Continente y O Sol da Caparica.
+
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.
 2. Completar datos: Claude propone los datos que faltan con fuentes.
