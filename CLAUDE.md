@@ -89,6 +89,7 @@ Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos 
 | Tipo | 10 | música 90, otro 40, gastronomía 30, comida vegana 30 |
 | Aforo | 5 | <5k 40, 5–10k 60, 10–30k 90, 30–60k 80, >60k 65 |
 
+Criterio de géneros (acordado el 27/11/2026): **world** = festival con mezcla de músicas tradicionales o de raíz de muchas partes del mundo y sus fusiones (p. ej. FMM Sines, Festival MED, Andanças); **latino**, **afrobeat** o **cultural** = festival centrado en una sola escena (p. ej. Afronation es afrobeat, no world).
 Referencias de Rodrigo: Waking Life y Paredes de Coura (música con acampada) fueron los mejores; Basilar es pequeño pero internacional y bien curado como Waking Life.
 Señales de mal ajuste (Rodrigo, 27/11/2026), para evaluar festivales parecidos al proponer o comentar:
 - RFM Somnii: en realidad era una fiesta electrónica de playa con público joven local, no un festival. Malas ventas y operación tediosa.
