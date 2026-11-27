@@ -1,5 +1,12 @@
 # Registro de cambios
 
+## 2026-11-27 (etapa 4: festivales y eventos nuevos)
+
+### Añadido
+- Review: sección "New festivals & events" con una tarjeta por evento (lugar, tipo, fechas 2027, aforo, géneros, público, acampada, contacto, motivo y fuente). Al aceptar se crea el festival con su temporada 2027 en Por contactar; se puede reintentar sin duplicar.
+- `scripts/generar-festivales-nuevos.ts` y primer lote `data/propuestas/nuevos-01.json`: 14 eventos en Portugal, cargados en Supabase.
+- El contador de Review incluye los festivales nuevos.
+
 ## 2026-11-27 (búsqueda de datos, tanda 4)
 
 ### Añadido
