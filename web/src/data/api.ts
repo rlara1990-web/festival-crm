@@ -34,6 +34,9 @@ export interface Api {
   /** Si trae estado_resultante y edicion_id, la base actualiza el estado de la edición (trigger). */
   crearInteraccion(fila: Omit<Interaccion, 'id' | 'creado_en'>): Promise<void>;
   crearContacto(fila: Omit<Contacto, 'id'>): Promise<void>;
+  /** Festival nuevo (desde una propuesta aceptada); devuelve el id */
+  crearFestival(fila: Partial<Festival> & Pick<Festival, 'nombre' | 'tipo'>): Promise<string>;
+  crearEdicion(fila: Partial<Edicion> & Pick<Edicion, 'festival_id' | 'anio'>): Promise<string>;
   actualizarContacto(id: string, cambios: Partial<Contacto>): Promise<void>;
   crearOrganizacion(fila: Omit<Organizacion, 'id'>): Promise<string>;
   actualizarOrganizacion(id: string, cambios: Partial<Organizacion>): Promise<void>;

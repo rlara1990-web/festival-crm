@@ -116,7 +116,13 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Cada lote va en `data/propuestas/lote-NN.json` y se convierte con `node scripts/generar-propuestas.ts` (valida y no duplica). Preferir la web oficial como fuente; si solo hay fuentes secundarias, decirlo en el motivo. Lo contradictorio no se propone.
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
 - Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
+- Lote 4 (27/11/2026): 10 festivales portugueses (Insomnia, Boom, Him Dub, Lisb-On, Elétrico, Vinculum, Yard, Jardins do Marquês, Afronation; Sacred Soul sin resultados), 36 propuestas.
 - No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
+
+## Nuevos festivales y eventos (etapa 4)
+- Cada lote va en `data/propuestas/nuevos-NN.json` (campos de `FestivalNuevo` en `src/shared/propuestas.ts` más `fuente_url`; `por_que` explica en inglés por qué encaja) y se convierte con `node scripts/generar-festivales-nuevos.ts` (valida y no propone lo que ya está en la lista o pendiente).
+- En Review aparecen como tarjetas; al aceptar se crea el festival, su temporada 2027 en Por contactar, el contacto y la fuente.
+- Lote nuevos-01 (27/11/2026): 14 eventos en Portugal (Andanças, Festival MED, Web Summit, Sónar Lisboa, Mercado Medieval de Óbidos, Viagem Medieval, Ageas Cooljazz, Sumol Summer Fest, Iminente, Out Jazz, Festival da Comida Continente, O Sol da Caparica, Brunch Electronik, MotoGP Portimão). Descartados: Bons Sons (bienal, próxima 2028), Super Bock Super Rock (ya no es festival de verano), Comic Con (sin edición en 2027), Milhões de Festa y Festival Forte (sin ediciones recientes).
 
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.

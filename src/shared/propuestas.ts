@@ -59,3 +59,49 @@ export function validarPropuesta(tabla: string, campo: string, valor: unknown): 
     case 'metodo': return typeof valor === 'string' && METODOS.includes(valor) ? null : 'Unknown application method';
   }
 }
+
+/** Festival o evento nuevo propuesto por Claude (propuestas.tipo = 'festival_nuevo'). */
+export interface FestivalNuevo {
+  nombre: string;
+  pais: 'PT' | 'ES';
+  ciudad?: string | null;
+  tipo: string;
+  generos?: string[];
+  perfil_publico?: string[];
+  acampada?: boolean | null;
+  web_url?: string | null;
+  instagram_url?: string | null;
+  idioma_correo?: string | null;
+  fecha_inicio?: string | null; // edición 2027
+  fecha_fin?: string | null;
+  fechas_texto?: string | null;
+  duracion_dias?: number | null;
+  aforo_min?: number | null;
+  aforo_max?: number | null;
+  conv_url?: string | null;
+  contacto?: ContactoPropuesto | null;
+  por_que: string; // por qué encaja, en inglés
+}
+
+/** Valida un festival nuevo con las mismas reglas que los datos sueltos. */
+export function validarFestivalNuevo(v: FestivalNuevo): string | null {
+  if (!v || typeof v !== 'object') return 'Expected an object';
+  if (!v.nombre?.trim()) return 'Missing name';
+  if (v.pais !== 'PT' && v.pais !== 'ES') return 'Country must be PT or ES';
+  if (!v.por_que?.trim()) return 'Missing reason (por_que)';
+  const comprobar: [string, string, unknown][] = [
+    ['festivales', 'tipo', v.tipo], ['festivales', 'ciudad', v.ciudad], ['festivales', 'generos', v.generos],
+    ['festivales', 'perfil_publico', v.perfil_publico], ['festivales', 'acampada', v.acampada], ['festivales', 'web_url', v.web_url],
+    ['festivales', 'instagram_url', v.instagram_url], ['ediciones', 'fecha_inicio', v.fecha_inicio], ['ediciones', 'fecha_fin', v.fecha_fin],
+    ['ediciones', 'fechas_texto', v.fechas_texto], ['ediciones', 'duracion_dias', v.duracion_dias], ['ediciones', 'aforo_min', v.aforo_min],
+    ['ediciones', 'aforo_max', v.aforo_max], ['ediciones', 'conv_url', v.conv_url], ['contactos', 'nuevo', v.contacto],
+  ];
+  for (const [tabla, campo, valor] of comprobar) {
+    if (valor == null || (Array.isArray(valor) && valor.length === 0)) continue;
+    const e = validarPropuesta(tabla, campo, valor);
+    if (e) return `${campo}: ${e}`;
+  }
+  if (v.idioma_correo && !['es', 'pt', 'en'].includes(v.idioma_correo)) return 'Email language must be es, pt or en';
+  if (v.fecha_inicio && v.fecha_fin && v.fecha_fin < v.fecha_inicio) return 'End date before start date';
+  return null;
+}

@@ -75,6 +75,19 @@ export async function crearApiDemo(): Promise<Api> {
     },
     async crearContacto(fila) { d.contactos.push({ ...fila, id: id() }); },
     async actualizarContacto(i, c) { parchear(d.contactos, i, c); },
+    async crearFestival(fila) {
+      const nuevo: Festival = { pais: null, ciudad: null, generos: [], perfil_publico: [], notas_publico: null, web_url: null, formulario_contacto_url: null,
+        instagram_url: null, idioma_correo: null, fuera_de_alcance: false, campos_pendientes: [], notas: null, acampada: null, parecido_a: [], ...fila, id: id() };
+      d.festivales.push(nuevo); return nuevo.id;
+    },
+    async crearEdicion(fila) {
+      const nueva = { fecha_inicio: null, fecha_fin: null, fechas_texto: null, duracion_dias: null, aforo_min: null, aforo_max: null, estado: 'por_contactar',
+        proxima_accion: null, proxima_accion_fecha: null, conv_apertura: null, conv_cierre: null, conv_metodo: null, conv_url: null, exclusividad: null,
+        coste_tipo: null, coste_notas: null, prioridad_antiguos: null, acepta_food_trucks: null, conv_notas: null, conv_fuente_url: null, conv_revisado_en: null,
+        puntuacion: null, puntuacion_detalle: null, puntuacion_incompleta: true, puntuacion_cobertura: null, experiencia: null, comentario_experiencia: null,
+        recontactos: 0, proximo_recontacto: null, ...fila, id: id() } as Edicion;
+      d.ediciones.push(nueva); return nueva.id;
+    },
     async crearOrganizacion(fila) { const nuevo = { ...fila, id: id() }; d.organizaciones.push(nuevo); return nuevo.id; },
     async actualizarOrganizacion(i, c) { parchear(d.organizaciones, i, c); },
     async crearVinculo(fila) { d.vinculos.push(fila); },

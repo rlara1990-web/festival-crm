@@ -27,3 +27,20 @@ describe('validarPropuesta', () => {
     expect(Object.keys(CAMPOS_PROPONIBLES).some((k) => k.includes('experiencia'))).toBe(false);
   });
 });
+
+import { validarFestivalNuevo } from '../src/shared/propuestas.ts';
+
+describe('validarFestivalNuevo', () => {
+  const base = { nombre: 'Web Summit', pais: 'PT' as const, tipo: 'otro', por_que: 'Large international audience.' };
+  it('acepta lo mínimo y datos completos', () => {
+    expect(validarFestivalNuevo(base)).toBeNull();
+    expect(validarFestivalNuevo({ ...base, ciudad: 'Lisboa', perfil_publico: ['turista_internacional'], fecha_inicio: '2027-11-08', fecha_fin: '2027-11-11',
+      aforo_max: 70000, web_url: 'https://websummit.com/', contacto: { email: 'info@x.com' }, idioma_correo: 'en' })).toBeNull();
+  });
+  it('rechaza país fuera de alcance, sin motivo o datos mal formados', () => {
+    expect(validarFestivalNuevo({ ...base, pais: 'FR' as 'PT' })).toMatch(/Country/);
+    expect(validarFestivalNuevo({ ...base, por_que: '' })).toMatch(/reason/);
+    expect(validarFestivalNuevo({ ...base, generos: ['kpop'] })).toMatch(/generos/);
+    expect(validarFestivalNuevo({ ...base, fecha_inicio: '2027-07-10', fecha_fin: '2027-07-01' })).toMatch(/End date/);
+  });
+});
