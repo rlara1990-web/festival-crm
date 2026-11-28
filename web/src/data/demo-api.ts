@@ -2,7 +2,7 @@
 // no se incluye en la web publicada. Imita el trigger de estado de las interacciones.
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api } from './api.ts';
-import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, EntradaBanco, Festival, Interaccion, Organizacion, Postulacion, Propuesta, RespuestaPost, Solicitud, Vinculo } from '../types.ts';
 import { rutaDocumento } from './documentos.ts';
 
 interface DatosDemo {
@@ -22,6 +22,14 @@ export async function crearApiDemo(): Promise<Api> {
   let usuario: string | null = 'demo@mocheverde.com';
   const id = () => crypto.randomUUID();
   const ahora = () => new Date().toISOString();
+  const postulaciones: Postulacion[] = [];
+  const respuestas: RespuestaPost[] = [];
+  const banco: EntradaBanco[] = [
+    { id: id(), tema: 'Concept', pregunta: 'Describe your food concept', idioma: 'en', notas: null, actualizado_en: ahora(),
+      respuesta: 'Moche Verde serves colourful rice bowls inspired by the flavours of Peruvian ceviche.' },
+    { id: id(), tema: 'Stall size', pregunta: 'Dimensions of your stall / food truck', idioma: 'en', notas: null, actualizado_en: ahora(),
+      respuesta: 'Demo: 3 x 3 m tent.' },
+  ];
   const parchear = <T extends { id: string }>(lista: T[], i: string, c: Partial<T>) => {
     const x = lista.find((y) => y.id === i);
     if (!x) throw new Error('Not found');
@@ -66,6 +74,20 @@ export async function crearApiDemo(): Promise<Api> {
       documentos.push({ id: id(), nombre: archivo.name, descripcion: datos.descripcion, ruta_storage: ruta, tipo_mime: archivo.type || null,
         tamano_bytes: archivo.size, festival_id: datos.festival_id, creado_en: ahora() });
     },
+    async postulacion(e) { return postulaciones.find((p) => p.edicion_id === e) ?? null; },
+    async respuestas(p) { return respuestas.filter((r) => r.postulacion_id === p).sort((a, b) => a.orden - b.orden); },
+    async banco() { return [...banco].sort((a, b) => a.tema.localeCompare(b.tema)); },
+    async crearPostulacion(fila) {
+      const nueva: Postulacion = { estado: 'preparando', enviada_en: null, decision_esperada: null, notas: null, actualizado_en: ahora(), ...fila, id: id() };
+      postulaciones.push(nueva); return nueva.id;
+    },
+    async actualizarPostulacion(i, c) { parchear(postulaciones, i, { ...c, actualizado_en: ahora() }); },
+    async crearRespuesta(fila) { respuestas.push({ ...fila, id: id(), actualizado_en: ahora() }); },
+    async actualizarRespuesta(i, c) { parchear(respuestas, i, { ...c, actualizado_en: ahora() }); },
+    async borrarRespuesta(i) { const k = respuestas.findIndex((r) => r.id === i); if (k >= 0) respuestas.splice(k, 1); },
+    async crearEntradaBanco(fila) { const n = { ...fila, id: id(), actualizado_en: ahora() }; banco.push(n); return n.id; },
+    async actualizarEntradaBanco(i, c) { parchear(banco, i, { ...c, actualizado_en: ahora() }); },
+    async borrarEntradaBanco(i) { const k = banco.findIndex((b) => b.id === i); if (k >= 0) banco.splice(k, 1); },
     async borrarDocumento(x) { const i = documentos.findIndex((y) => y.id === x.id); if (i >= 0) documentos.splice(i, 1); },
     async actualizarFestival(i, c) { parchear(d.festivales, i, c); },
     async actualizarEdicion(i, c) { parchear(d.ediciones, i, c); },

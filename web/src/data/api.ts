@@ -1,6 +1,6 @@
 // Capa de datos. Hay dos implementaciones: Supabase (real) y demo (solo en desarrollo).
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
-import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, EntradaBanco, Festival, Interaccion, Organizacion, Postulacion, Propuesta, RespuestaPost, Solicitud, Vinculo } from '../types.ts';
 
 export interface Filtro { festival_id?: string; organizacion_id?: string }
 
@@ -25,6 +25,9 @@ export interface Api {
   documentos(festivalId?: string | null): Promise<Documento[]>;
   /** Enlace temporal para abrir o descargar un documento */
   enlaceDocumento(d: Documento): Promise<string>;
+  postulacion(edicionId: string): Promise<Postulacion | null>;
+  respuestas(postulacionId: string): Promise<RespuestaPost[]>;
+  banco(): Promise<EntradaBanco[]>;
   /** ¿Ya existe esta fuente? (para no duplicar al reintentar) */
   existeFuente(fila: { tabla: string; registro_id: string; campo: string | null; valor: string }): Promise<boolean>;
 
@@ -48,6 +51,14 @@ export interface Api {
   descartarSolicitud(id: string): Promise<void>;
   subirDocumento(archivo: File, datos: { festival_id: string | null; descripcion: string | null }): Promise<void>;
   borrarDocumento(d: Documento): Promise<void>;
+  crearPostulacion(fila: Pick<Postulacion, 'edicion_id' | 'festival_id' | 'formulario_url' | 'fecha_limite'>): Promise<string>;
+  actualizarPostulacion(id: string, cambios: Partial<Postulacion>): Promise<void>;
+  crearRespuesta(fila: Pick<RespuestaPost, 'postulacion_id' | 'orden' | 'pregunta' | 'ayuda' | 'respuesta' | 'estado' | 'banco_id'>): Promise<void>;
+  actualizarRespuesta(id: string, cambios: Partial<RespuestaPost>): Promise<void>;
+  borrarRespuesta(id: string): Promise<void>;
+  crearEntradaBanco(fila: Pick<EntradaBanco, 'tema' | 'pregunta' | 'respuesta' | 'idioma' | 'notas'>): Promise<string>;
+  actualizarEntradaBanco(id: string, cambios: Partial<EntradaBanco>): Promise<void>;
+  borrarEntradaBanco(id: string): Promise<void>;
   resolverPropuesta(id: string, estado: 'aceptada' | 'rechazada'): Promise<void>;
   /** Registra de dónde viene un dato aceptado */
   crearFuente(fila: { tabla: string; registro_id: string; campo: string | null; valor: string; url: string | null; metodo: 'manual' | 'scraping' }): Promise<void>;

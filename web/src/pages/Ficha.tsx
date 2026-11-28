@@ -15,6 +15,7 @@ import { SeccionHistorial } from '../components/Historial.tsx';
 import { ComentariosCtx, Nota, type CtxComentarios } from '../components/Notas.tsx';
 import { SeccionPedirClaude } from '../components/PedirClaude.tsx';
 import { SeccionDocumentos } from '../components/Documentos.tsx';
+import { SeccionPostulacion } from '../components/Postulacion.tsx';
 
 interface Datos {
   f: Festival;
@@ -106,6 +107,7 @@ export function Ficha({ api, id }: { api: Api; id: string }) {
       <div className="columnas">
         <div>
           {objetivo && <SeccionTemporada e={objetivo} f={d.f} contactos={d.contactos} gestora={gestora} guardar={guardar} api={api} coms={coms} />}
+          {objetivo && <SeccionPostulacion api={api} f={d.f} e={objetivo} alCambiarEdicion={cargar} />}
           <SeccionOrganizaciones f={d.f} organizaciones={d.organizaciones} vinculos={d.vinculos} contactosOrg={d.contactosOrg} guardar={guardar} api={api} />
           <SeccionFestival f={d.f} todos={d.todos} guardar={guardar} api={api} coms={coms} />
           <SeccionContactos dueno={{ festival_id: d.f.id, organizacion_id: null }} contactos={d.contactos} guardar={guardar} api={api} coms={coms} />

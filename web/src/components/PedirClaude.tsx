@@ -8,6 +8,7 @@ export const TIPOS_SOLICITUD: Record<Solicitud['tipo'], string> = {
   completar_datos: 'Find missing data',
   preparar_correo: 'Prepare first email (Outlook draft)',
   preparar_recontacto: 'Prepare follow-up (Outlook draft)',
+  preparar_postulacion: 'Pre-fill the application form',
   otro: 'Other',
 };
 

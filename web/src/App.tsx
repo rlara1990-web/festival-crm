@@ -7,6 +7,7 @@ import { Organizaciones } from './pages/Organizaciones.tsx';
 import { Organizacion } from './pages/Organizacion.tsx';
 import { Propuestas } from './pages/Propuestas.tsx';
 import { Documentos } from './pages/Documentos.tsx';
+import { Banco } from './pages/Banco.tsx';
 
 /** Rutas con hash (#/ y #/festival/<id>): funcionan en hosting estático sin configuración. */
 function useRuta(): string {
@@ -43,15 +44,17 @@ export function App() {
   const enOrgs = ruta.startsWith('/organizacion');
   const enRevision = ruta === '/propuestas';
   const enDocs = ruta === '/documentos';
+  const enBanco = ruta === '/respuestas';
   return (
     <div className="app">
       <header className="barra">
         <div className="barra-izq">
           <a href="#/" className="marca">Moche Verde <span>Festival CRM</span></a>
           <nav>
-            <a href="#/" className={!enOrgs && !enRevision && !enDocs ? 'activo' : ''}>Festivals</a>
+            <a href="#/" className={!enOrgs && !enRevision && !enDocs && !enBanco ? 'activo' : ''}>Festivals</a>
             <a href="#/organizaciones" className={enOrgs ? 'activo' : ''}>Organisations</a>
             <a href="#/documentos" className={enDocs ? 'activo' : ''}>Documents</a>
+            <a href="#/respuestas" className={enBanco ? 'activo' : ''}>Answers</a>
             <a href="#/propuestas" className={enRevision ? 'activo' : ''}>Review{pendientes > 0 && <span className="contador">{pendientes}</span>}</a>
           </nav>
         </div>
@@ -64,6 +67,7 @@ export function App() {
         : org ? <Organizacion key={org[1]} api={api} id={org[1]!} />
         : ruta === '/organizaciones' ? <Organizaciones api={api} />
         : enDocs ? <Documentos api={api} />
+        : enBanco ? <Banco api={api} />
         : enRevision ? <Propuestas api={api} alCambiar={contarPendientes} />
         : <Lista api={api} />}</main>
     </div>
