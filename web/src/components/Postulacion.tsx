@@ -2,10 +2,10 @@
 // van completando en varios días. Claude las pre-rellena desde el banco de respuestas (Ask Claude).
 import { useCallback, useEffect, useState } from 'react';
 import type { Api } from '../data/api.ts';
-import type { Edicion, EntradaBanco, Festival, Postulacion, RespuestaPost } from '../types.ts';
+import type { Comentario, Edicion, EntradaBanco, Festival, Postulacion, RespuestaPost } from '../types.ts';
 import { estadoTrasEditar, progreso, sugerencias } from '../../../src/shared/postulaciones.ts';
 import { fechaTexto } from '../labels.ts';
-import { Nota } from './Notas.tsx';
+import { ComentariosCtx, Nota, type CtxComentarios } from './Notas.tsx';
 import { Enlace, Seccion, hoy, vacio } from './ui.tsx';
 
 const ESTADOS_POST = { preparando: 'In preparation', enviada: 'Submitted', descartada: 'Not applying' } as const;
@@ -17,6 +17,7 @@ export function SeccionPostulacion({ api, f, e, alCambiarEdicion }: {
   const [post, setPost] = useState<Postulacion | null | undefined>(undefined);
   const [rs, setRs] = useState<RespuestaPost[]>([]);
   const [banco, setBanco] = useState<EntradaBanco[]>([]);
+  const [coms, setComs] = useState<Comentario[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [aviso, setAviso] = useState<string | null>(null);
   const [ocupado, setOcupado] = useState(false);
@@ -24,7 +25,9 @@ export function SeccionPostulacion({ api, f, e, alCambiarEdicion }: {
   const cargar = useCallback(async () => {
     const p = await api.postulacion(e.id);
     const [r, b] = await Promise.all([p ? api.respuestas(p.id) : Promise.resolve([]), api.banco()]);
-    setPost(p); setRs(r); setBanco(b);
+    // Los comentarios de las respuestas se cargan aquí (la ficha solo carga los del festival y la temporada)
+    const c = r.length ? await api.comentarios(r.map((x) => x.id)) : [];
+    setPost(p); setRs(r); setBanco(b); setComs(c);
   }, [api, e.id]);
   useEffect(() => { cargar().catch((x: Error) => setError(x.message)); }, [cargar]);
 
@@ -53,7 +56,14 @@ export function SeccionPostulacion({ api, f, e, alCambiarEdicion }: {
     catch { setError('Could not copy to the clipboard'); }
   }
 
+  const ctxComentarios: CtxComentarios = {
+    lista: coms.filter((c) => !c.resuelto),
+    crear: async (tabla, registro, campo, texto) => { await api.crearComentario({ tabla, registro_id: registro, campo, texto }); await cargar(); },
+    resolver: async (cid) => { await api.resolverComentario(cid); await cargar(); },
+  };
+
   return (
+    <ComentariosCtx.Provider value={ctxComentarios}>
     <Seccion titulo={titulo} extra={<span className={`etiqueta post-${post.estado}`}>{ESTADOS_POST[post.estado]}</span>}>
       <Cabecera api={api} post={post} e={e} hacer={hacer} ocupado={ocupado} alCambiarEdicion={alCambiarEdicion} />
       <div className="post-barra">
@@ -72,6 +82,7 @@ export function SeccionPostulacion({ api, f, e, alCambiarEdicion }: {
       </ol>
       {post.estado === 'preparando' && <NuevaPregunta api={api} post={post} orden={(rs.at(-1)?.orden ?? 0) + 1} hacer={hacer} ocupado={ocupado} />}
     </Seccion>
+    </ComentariosCtx.Provider>
   );
 }
 

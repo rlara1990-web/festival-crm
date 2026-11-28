@@ -11,6 +11,11 @@
 
 ### Corregido
 - La barra de navegación se desbordaba en móvil al añadir pestañas.
+- Los comentarios de las respuestas de una postulación no se cargaban en la ficha.
+
+### Datos
+- Banco de respuestas: 17 respuestas a partir de la postulación a Boom 2027 (solo en Supabase; incluye datos fiscales).
+- Postulación de Waking Life 2027 creada con sus 39 preguntas pre-rellenadas (fecha límite 31/01/2027) y 7 comentarios de Claude sobre lo que hay que revisar.
 
 ## 2026-11-27 (contactos de eventos nuevos)
 
