@@ -39,7 +39,7 @@ Idiomas:
    - Respuestas de festivales → Claude resume y deja una propuesta de cambio de estado para confirmar.
 6. Seguimiento: a los 2 días hábiles sin respuesta (lunes a viernes, sin festivos) → Recontacto 1; otros 2 días → Recontacto 2; otros 2 días → Sin respuesta.
 7. Conversación: si responden pasa a En conversación; una reunión (Zoom u otra) es una interacción de tipo reunión, con fecha, hora, enlace y notas; con confirmación se crea el evento en el calendario de Outlook.
-8. Convocatoria: fechas, formulario enviado y fecha esperada de decisión como próxima acción.
+8. Convocatoria: cuando un festival abre su formulario, se crea la postulación en la ficha (sección Application); Claude lee el formulario y pre-rellena las respuestas desde el banco; Rodrigo y Zac completan, revisan, envían en la web del festival y la marcan enviada (fecha esperada de decisión como próxima acción).
 9. Resultado: Aceptado o Rechazado. El motivo va como comentario sobre el estado.
 10. Después del festival: experiencia + comentario (Rodrigo o Zac).
 11. Año siguiente: se crea la edición nueva y hereda lo que siga siendo válido.
@@ -58,7 +58,7 @@ Descartado: decisión nuestra, en cualquier momento.
 Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta = nos ignoraron.
 
 ## Modelo de datos
-Fuente de verdad: `supabase/migrations/` (cinco migraciones del 24/11/2026, aplicadas en Supabase).
+Fuente de verdad: `supabase/migrations/` (cinco migraciones del 24/11/2026 y una del 28/11/2026, aplicadas en Supabase).
 Acceso: registro de usuarios desactivado en Supabase; un único usuario compartido, info@mocheverde.com. Las políticas RLS solo dejan pasar a los emails de `es_equipo()` (para añadir a alguien, nueva migración que actualice esa lista). Lo marcado **(v2)** está implementado en la base y en la interfaz (comentarios, Ask Claude y documentos desde el 27/11/2026).
 Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones, 2 comentarios, 72 fuentes. La carga se niega a ejecutarse si ya hay festivales.
 
@@ -72,6 +72,7 @@ Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 1
 - **(v2)** `solicitudes`: pedidos a Claude hechos desde el CRM (botón "Pedir a Claude": completar datos, preparar correo o recontacto). Claude los procesa en la siguiente revisión; para algo inmediato se le pide en una conversación.
 - **(v2)** `ajustes`: mensaje base de correo, web/Instagram/teléfono de Moche Verde, días de recontacto (2 hábiles).
 - `organizaciones` y `festival_organizacion` (24/11/2026): empresas que gestionan la comida de varios festivales (p. ej. la misma para Paredes de Coura y NOS Primavera Sound), productoras o agencias, vinculadas a festivales con un rol (`gestion_comida`, `productora`, `otro`). Contactos e interacciones pueden ser de un festival o de una organización; una interacción de la organización puede referirse a un festival y cambiar el estado de su edición. Si un festival tiene gestora de comida, la ficha indica que se contacta a través de ella.
+- `postulaciones`, `postulacion_respuestas` y `banco_respuestas` (28/11/2026): formularios de food vendors de cada festival. Una postulación por edición (enlace al formulario, fecha límite, estado preparando / enviada / descartada, fecha de envío y de decisión esperada) con sus preguntas y respuestas (estado vacía / borrador / revisada, comentarios por respuesta). El banco guarda respuestas reutilizables por tema; Claude pre-rellena con él las postulaciones nuevas (solicitud `preparar_postulacion`) y Rodrigo o Zac revisan y envían. Al marcarla enviada, la temporada pasa a Convocatoria enviada.
 - `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). Cálculo en `src/scoring/score.ts`.
 - `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
 
