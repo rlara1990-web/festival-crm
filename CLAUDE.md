@@ -39,7 +39,7 @@ Idiomas:
    - Respuestas de festivales → Claude resume y deja una propuesta de cambio de estado para confirmar.
 6. Seguimiento: a los 2 días hábiles sin respuesta (lunes a viernes, sin festivos) → Recontacto 1; otros 2 días → Recontacto 2; otros 2 días → Sin respuesta.
 7. Conversación: si responden pasa a En conversación; una reunión (Zoom u otra) es una interacción de tipo reunión, con fecha, hora, enlace y notas; con confirmación se crea el evento en el calendario de Outlook.
-8. Convocatoria: fechas, formulario enviado y fecha esperada de decisión como próxima acción.
+8. Convocatoria: cuando un festival abre su formulario, se crea la postulación en la ficha (sección Application); Claude lee el formulario y pre-rellena las respuestas desde el banco; Rodrigo y Zac completan, revisan, envían en la web del festival y la marcan enviada (fecha esperada de decisión como próxima acción).
 9. Resultado: Aceptado o Rechazado. El motivo va como comentario sobre el estado.
 10. Después del festival: experiencia + comentario (Rodrigo o Zac).
 11. Año siguiente: se crea la edición nueva y hereda lo que siga siendo válido.
@@ -58,7 +58,7 @@ Descartado: decisión nuestra, en cualquier momento.
 Rechazado = lo deciden ellos. Descartado = lo decidimos nosotros. Sin respuesta = nos ignoraron.
 
 ## Modelo de datos
-Fuente de verdad: `supabase/migrations/` (cinco migraciones del 24/11/2026, aplicadas en Supabase).
+Fuente de verdad: `supabase/migrations/` (cinco migraciones del 24/11/2026 y una del 28/11/2026, aplicadas en Supabase).
 Acceso: registro de usuarios desactivado en Supabase; un único usuario compartido, info@mocheverde.com. Las políticas RLS solo dejan pasar a los emails de `es_equipo()` (para añadir a alguien, nueva migración que actualice esa lista). Lo marcado **(v2)** está implementado en la base y en la interfaz (comentarios, Ask Claude y documentos desde el 27/11/2026).
 Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 143 ediciones, 31 contactos, 45 interacciones, 2 comentarios, 72 fuentes. La carga se niega a ejecutarse si ya hay festivales.
 
@@ -72,6 +72,7 @@ Datos cargados en Supabase el 24/11/2026 (`supabase/seed.sql`): 72 festivales, 1
 - **(v2)** `solicitudes`: pedidos a Claude hechos desde el CRM (botón "Pedir a Claude": completar datos, preparar correo o recontacto). Claude los procesa en la siguiente revisión; para algo inmediato se le pide en una conversación.
 - **(v2)** `ajustes`: mensaje base de correo, web/Instagram/teléfono de Moche Verde, días de recontacto (2 hábiles).
 - `organizaciones` y `festival_organizacion` (24/11/2026): empresas que gestionan la comida de varios festivales (p. ej. la misma para Paredes de Coura y NOS Primavera Sound), productoras o agencias, vinculadas a festivales con un rol (`gestion_comida`, `productora`, `otro`). Contactos e interacciones pueden ser de un festival o de una organización; una interacción de la organización puede referirse a un festival y cambiar el estado de su edición. Si un festival tiene gestora de comida, la ficha indica que se contacta a través de ella.
+- `postulaciones`, `postulacion_respuestas` y `banco_respuestas` (28/11/2026): formularios de food vendors de cada festival. Una postulación por edición (enlace al formulario, fecha límite, estado preparando / enviada / descartada, fecha de envío y de decisión esperada) con sus preguntas y respuestas (estado vacía / borrador / revisada, comentarios por respuesta). El banco guarda respuestas reutilizables por tema; Claude pre-rellena con él las postulaciones nuevas (solicitud `preparar_postulacion`) y Rodrigo o Zac revisan y envían. Al marcarla enviada, la temporada pasa a Convocatoria enviada.
 - `puntuacion_config`: único lugar de pesos y afinidades (una fila activa). Cálculo en `src/scoring/score.ts`.
 - `fuentes_dato`: procedencia de cada dato (CSV, manual, scraping) con URL y fecha.
 
@@ -83,13 +84,18 @@ Motivo del neutro (24/11/2026): repartiendo el peso, festivales con pocos datos 
 |---|---|---|
 | Experiencia propia (la más reciente) | 30 | muy positiva 100, positiva 80, neutra 50, negativa 25, muy negativa 0 |
 | Género (media de sus géneros) | 20 | world 90, indie 85, electrónica 80, hippie 75, cultural 75, latino 75, alternativo 75, reggae/dub 70, pop 65, hip hop 60, afrobeat 60, psicodelia 60, jazz 60, ópera 40, blues 40, industrial 35, rock 35, steampunk 30, punk 20, metal 10 |
-| Público | 15 | turista internacional 90, mixto 75, familias 60, joven local 50, nicho subcultura 15 |
+| Público | 15 | turista internacional 90, mixto 75, familias 60, joven local 30 (antes 50; bajado el 27/11/2026 por la experiencia de Somnii), nicho subcultura 15 |
 | Acampada | 10 | sí 100, no 40 |
 | Duración | 10 | 1 día 30, 2 días 50, 3 días 70, 4–5 días 85, 6+ días 100 |
 | Tipo | 10 | música 90, otro 40, gastronomía 30, comida vegana 30 |
 | Aforo | 5 | <5k 40, 5–10k 60, 10–30k 90, 30–60k 80, >60k 65 |
 
+Criterio de géneros (acordado el 27/11/2026): **world** = festival con mezcla de músicas tradicionales o de raíz de muchas partes del mundo y sus fusiones (p. ej. FMM Sines, Festival MED, Andanças); **latino**, **afrobeat** o **cultural** = festival centrado en una sola escena (p. ej. Afronation es afrobeat, no world).
 Referencias de Rodrigo: Waking Life y Paredes de Coura (música con acampada) fueron los mejores; Basilar es pequeño pero internacional y bien curado como Waking Life.
+Señales de mal ajuste (Rodrigo, 27/11/2026), para evaluar festivales parecidos al proponer o comentar:
+- RFM Somnii: en realidad era una fiesta electrónica de playa con público joven local, no un festival. Malas ventas y operación tediosa.
+- Vilar de Mouros: público de rock / pop punk que no encaja con nuestra comida.
+Al proponer festivales nuevos o datos, decir en el motivo si un festival se parece a estos (p. ej. fiestas de playa con público joven: Medusa, Weekend Beach, Arenal Sound, Sumol Summer Fest). No se investigan más datos de Somnii ni Vilar de Mouros.
 
 ## Datos acordados para la carga inicial
 - Experiencia 2026: Waking Life muy positiva; Paredes de Coura muy positiva; NOS Primavera Sound positiva; RFM Somnii muy negativa (malas ventas, en la playa, operación tediosa); Vilar de Mouros muy negativa (público no adecuado: rock, pop punk). Los cinco en estado Aceptado en 2026.
@@ -117,12 +123,16 @@ El archivo `data/festivals_2026_original.csv` es la lista original del año pasa
 - Lote 1 y 2 (24/11/2026): 10 festivales con mejor puntuación, 41 propuestas.
 - Lote 3 (26/11/2026): festivales 11–20 (Arenal Sound, ZNA, Medusa, Rototom, Suncébeat, FIB, Neopop, Vida, NOS Alive, Holika), 44 propuestas.
 - Lote 4 (27/11/2026): 10 festivales portugueses (Insomnia, Boom, Him Dub, Lisb-On, Elétrico, Vinculum, Yard, Jardins do Marquês, Afronation; Sacred Soul sin resultados), 36 propuestas.
+- Lote 5 (27/11/2026): 10 festivales portugueses más (Kalorama, Coala, Sudoeste, Festival F, Mares Vivas, Rock in Rio, North, Avante, Guimarães Jazz, OperaFest), 26 propuestas. Rock in Rio no tiene edición en 2027 (siguiente en 2028); Marés Vivas pasó a Matosinhos como MEO Marés; Sudoeste sin confirmar.
+- Lote 6 (27/11/2026): Sonic Blast, Out Fest, Festival Vapor, DHB Portugal, 15 propuestas. Con esto, todos los portugueses de la lista están investigados (salvo Somnii y Vilar de Mouros, por decisión de Rodrigo). España queda para más adelante (8 festivales sin investigar).
 - No poner datos de Moche Verde (correo, teléfono) en las peticiones a webs externas: usar una identificación genérica.
 
 ## Nuevos festivales y eventos (etapa 4)
 - Cada lote va en `data/propuestas/nuevos-NN.json` (campos de `FestivalNuevo` en `src/shared/propuestas.ts` más `fuente_url`; `por_que` explica en inglés por qué encaja) y se convierte con `node scripts/generar-festivales-nuevos.ts` (valida y no propone lo que ya está en la lista o pendiente).
 - En Review aparecen como tarjetas; al aceptar se crea el festival, su temporada 2027 en Por contactar, el contacto y la fuente.
 - Lote nuevos-01 (27/11/2026): 14 eventos en Portugal (Andanças, Festival MED, Web Summit, Sónar Lisboa, Mercado Medieval de Óbidos, Viagem Medieval, Ageas Cooljazz, Sumol Summer Fest, Iminente, Out Jazz, Festival da Comida Continente, O Sol da Caparica, Brunch Electronik, MotoGP Portimão). Descartados: Bons Sons (bienal, próxima 2028), Super Bock Super Rock (ya no es festival de verano), Comic Con (sin edición en 2027), Milhões de Festa y Festival Forte (sin ediciones recientes).
+
+- Contactos de los 14 aceptados (`data/propuestas/lote-07-contactos.json`, 27/11/2026): 10 contactos para 9 eventos, cargados directamente en Supabase (el generador solo conoce los festivales del CSV). Sin contacto público: Festival MED (lo organiza la Câmara de Loulé), Web Summit (vendedores elegidos vía su partner hub), Iminente, Festival da Comida Continente y O Sol da Caparica.
 
 ## Etapas
 1. Base: modelo v2, carga de datos, CRM web (login, lista con filtros, ficha, comentarios, propuestas, documentos), hosting.

@@ -1,5 +1,37 @@
 # Registro de cambios
 
+## 2026-11-28 (postulaciones y banco de respuestas)
+
+### Añadido
+- Migración `20261128000006_postulaciones.sql`: tablas `postulaciones`, `postulacion_respuestas` y `banco_respuestas` (solo equipo), y tipo de solicitud `preparar_postulacion`.
+- Ficha → sección "Application 2027": enlace y fecha límite del formulario, preguntas y respuestas que se guardan al salir del campo, estado por respuesta (empty / draft / reviewed), barra de progreso, comentarios por respuesta, sugerencias del banco, "Save to bank", "Copy all answers", "Ask Claude to pre-fill" y "Mark as submitted" (la temporada pasa a Application sent).
+- Pestaña "Answers": banco de respuestas reutilizables (buscar, crear, editar, borrar).
+- `src/shared/postulaciones.ts` (progreso, estado tras editar, sugerencias del banco) con pruebas.
+- Procedimiento de revisión: cómo procesar `preparar_postulacion`.
+
+### Corregido
+- La barra de navegación se desbordaba en móvil al añadir pestañas.
+
+## 2026-11-27 (contactos de eventos nuevos)
+
+### Añadido
+- `data/propuestas/lote-07-contactos.json`: 10 contactos propuestos para 9 de los 14 eventos nuevos.
+
+## 2026-11-27 (búsqueda de datos, tanda 6)
+
+### Añadido
+- Lote 6 de propuestas (`data/propuestas/lote-06.json`): 15 datos para los últimos 4 festivales portugueses de la lista.
+
+## 2026-11-27 (puntuación)
+
+### Cambiado
+- Público "joven local": 50 → 30 (en Supabase y en `src/scoring/default-config.ts`), por la experiencia de RFM Somnii. Ningún festival tenía ese público asignado, así que no cambió ninguna puntuación existente.
+
+## 2026-11-27 (búsqueda de datos, tanda 5)
+
+### Añadido
+- Lote 5 de propuestas (`data/propuestas/lote-05.json`): 26 datos para 10 festivales portugueses.
+
 ## 2026-11-27 (etapa 4: festivales y eventos nuevos)
 
 ### Añadido

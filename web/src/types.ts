@@ -139,7 +139,7 @@ export interface Comentario {
 /** Pedido a Claude desde el CRM; se procesa en la siguiente revisión programada */
 export interface Solicitud {
   id: string;
-  tipo: 'completar_datos' | 'preparar_correo' | 'preparar_recontacto' | 'otro';
+  tipo: 'completar_datos' | 'preparar_correo' | 'preparar_recontacto' | 'preparar_postulacion' | 'otro';
   festival_id: string | null;
   edicion_id: string | null;
   detalle: string | null;
@@ -159,4 +159,41 @@ export interface Documento {
   tamano_bytes: number | null;
   festival_id: string | null;
   creado_en: string;
+}
+
+/** Postulación a un festival (formulario de food vendors), una por temporada */
+export interface Postulacion {
+  id: string;
+  edicion_id: string;
+  festival_id: string;
+  formulario_url: string | null;
+  fecha_limite: string | null;
+  estado: 'preparando' | 'enviada' | 'descartada';
+  enviada_en: string | null;
+  decision_esperada: string | null;
+  notas: string | null;
+  actualizado_en: string;
+}
+
+export interface RespuestaPost {
+  id: string;
+  postulacion_id: string;
+  orden: number;
+  pregunta: string;
+  ayuda: string | null;
+  respuesta: string | null;
+  estado: 'vacia' | 'borrador' | 'revisada';
+  banco_id: string | null;
+  actualizado_en: string;
+}
+
+/** Respuesta reutilizable entre formularios */
+export interface EntradaBanco {
+  id: string;
+  tema: string;
+  pregunta: string;
+  respuesta: string;
+  idioma: 'en' | 'pt' | 'es';
+  notas: string | null;
+  actualizado_en: string;
 }

@@ -1,7 +1,7 @@
 import { createClient } from '@supabase/supabase-js';
 import type { PuntuacionConfig } from '../../../src/scoring/score.ts';
 import type { Api, Filtro } from './api.ts';
-import type { Comentario, Contacto, Documento, Edicion, Festival, Interaccion, Organizacion, Propuesta, Solicitud, Vinculo } from '../types.ts';
+import type { Comentario, Contacto, Documento, Edicion, EntradaBanco, Festival, Interaccion, Organizacion, Postulacion, Propuesta, RespuestaPost, Solicitud, Vinculo } from '../types.ts';
 import { rutaDocumento } from './documentos.ts';
 
 // Clave publicable: pensada para el navegador. La seguridad la dan las políticas RLS
@@ -155,6 +155,39 @@ export function crearApiSupabase(): Api {
       const { count, error } = await q;
       if (error) throw new Error(error.message);
       return (count ?? 0) > 0;
+    },
+    async postulacion(edicionId) {
+      return comprobar(await db.from('postulaciones').select('*').eq('edicion_id', edicionId).maybeSingle()) as Postulacion | null;
+    },
+    async respuestas(postulacionId) {
+      return comprobar(await db.from('postulacion_respuestas').select('*').eq('postulacion_id', postulacionId).order('orden')) as RespuestaPost[];
+    },
+    async banco() {
+      return comprobar(await db.from('banco_respuestas').select('*').order('tema')) as EntradaBanco[];
+    },
+    async crearPostulacion(fila) {
+      return (comprobar(await db.from('postulaciones').insert(fila).select('id').single()) as { id: string }).id;
+    },
+    async actualizarPostulacion(id, cambios) {
+      comprobar(await db.from('postulaciones').update(cambios).eq('id', id));
+    },
+    async crearRespuesta(fila) {
+      comprobar(await db.from('postulacion_respuestas').insert(fila));
+    },
+    async actualizarRespuesta(id, cambios) {
+      comprobar(await db.from('postulacion_respuestas').update(cambios).eq('id', id));
+    },
+    async borrarRespuesta(id) {
+      comprobar(await db.from('postulacion_respuestas').delete().eq('id', id));
+    },
+    async crearEntradaBanco(fila) {
+      return (comprobar(await db.from('banco_respuestas').insert(fila).select('id').single()) as { id: string }).id;
+    },
+    async actualizarEntradaBanco(id, cambios) {
+      comprobar(await db.from('banco_respuestas').update(cambios).eq('id', id));
+    },
+    async borrarEntradaBanco(id) {
+      comprobar(await db.from('banco_respuestas').delete().eq('id', id));
     },
     async borrarVinculo(f) {
       comprobar(await db.from('festival_organizacion').delete()

@@ -1,0 +1,63 @@
+[
+  { "festival": "Kalorama", "tabla": "ediciones", "campo": "fecha_inicio", "valor": "2027-08-26",
+    "fuente_url": "https://echoboomer.pt/meo-kalorama-regressa-2027-fica-mais-2-anos-parque-da-bela-vista/", "motivo": "MEO Kalorama 2027: 26–28 August at Parque da Bela Vista, Lisbon (organiser announcement reported by RFM, CM Jornal and Echo Boomer)." },
+  { "festival": "Kalorama", "tabla": "ediciones", "campo": "fecha_fin", "valor": "2027-08-28",
+    "fuente_url": "https://echoboomer.pt/meo-kalorama-regressa-2027-fica-mais-2-anos-parque-da-bela-vista/", "motivo": "End date of the 2027 edition (26–28 August)." },
+  { "festival": "Kalorama", "tabla": "festivales", "campo": "ciudad", "valor": "Lisboa (Parque da Bela Vista)",
+    "fuente_url": "https://echoboomer.pt/meo-kalorama-regressa-2027-fica-mais-2-anos-parque-da-bela-vista/", "motivo": "Venue booked for 2027 and 2028. Over 110,000 people across the 2026 edition." },
+
+  { "festival": "Coala Festival", "tabla": "ediciones", "campo": "fecha_inicio", "valor": "2027-05-29",
+    "fuente_url": "https://www.timeout.com/cascais/news/coala-festival-confirms-cascais-return-for-may-29-30-102626", "motivo": "Coala Festival Portugal 2027 (4th edition): 29–30 May at Hipódromo Manuel Possolo, Cascais (Time Out, VisitPortugal)." },
+  { "festival": "Coala Festival", "tabla": "ediciones", "campo": "fecha_fin", "valor": "2027-05-30",
+    "fuente_url": "https://www.timeout.com/cascais/news/coala-festival-confirms-cascais-return-for-may-29-30-102626", "motivo": "End date (29–30 May 2027)." },
+  { "festival": "Coala Festival", "tabla": "festivales", "campo": "ciudad", "valor": "Cascais (Hipódromo Manuel Possolo)",
+    "fuente_url": "https://www.visitlisboa.com/en/events/coala-festival?date=2027-05-29", "motivo": "Venue: Hipódromo Manuel Possolo, Av. da República 371, Cascais." },
+  { "festival": "Coala Festival", "tabla": "festivales", "campo": "generos", "valor": ["world", "latino"],
+    "fuente_url": "https://www.timeout.com/cascais/news/slow-j-bonga-and-lulu-santos-are-the-first-names-confirmed-for-coala-festival-portugal-122225", "motivo": "Brazilian and Lusophone music festival (2026 line-up: Slow J, Bonga, Lulu Santos, Maria Bethânia). Genre mapping is our interpretation." },
+
+  { "festival": "Sudoeste", "tabla": "festivales", "campo": "ciudad", "valor": "Zambujeira do Mar (Odemira)",
+    "fuente_url": "https://observador.pt/2026/02/10/festival-de-musica-sudoeste-sem-edicao-em-2026-acredito-que-em-2027-vou-fazer-diz-luis-montez/", "motivo": "Held at Herdade da Casa Branca, Zambujeira do Mar." },
+  { "festival": "Sudoeste", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Return in 2027 not confirmed (no edition in 2026)",
+    "fuente_url": "https://www.noticiasaominuto.com/cultura/2996460/luis-montez-fala-em-bons-contactos-para-regresso-do-sudoeste-em-2027", "motivo": "No edition in 2026. The promoter (Luís Montez) hopes to return in 2027 but depends on sponsorship; nothing confirmed as of May 2026." },
+
+  { "festival": "Festival F", "tabla": "festivales", "campo": "ciudad", "valor": "Faro (Vila Adentro)",
+    "fuente_url": "https://www.visitportugal.com/pt-pt/content/festival-f", "motivo": "Held across eight venues in Faro's old town (Vila Adentro); organised by the Faro municipality, Ambifaro and Teatro das Figuras." },
+  { "festival": "Festival F", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Early September 2027 (to confirm; 2026: 3–5 Sep)",
+    "fuente_url": "https://www.portugalresident.com/festival-f-faro-2026/", "motivo": "2026 edition (11th) ran 3–5 September; 2027 dates not yet published." },
+  { "festival": "Festival F", "tabla": "ediciones", "campo": "duracion_dias", "valor": 3,
+    "fuente_url": "https://www.portugalresident.com/festival-f-faro-2026/", "motivo": "Three days (3–5 September in 2026)." },
+
+  { "festival": "Mares Vivas", "tabla": "festivales", "campo": "ciudad", "valor": "Matosinhos",
+    "fuente_url": "https://observador.pt/2026/07/19/festival-mares-regressa-a-matosinhos-em-2027-de-16-a-18-de-julho/", "motivo": "The festival left Vila Nova de Gaia, is now called MEO Marés and was held in Matosinhos for the first time in 2026. Consider renaming it in the CRM." },
+  { "festival": "Mares Vivas", "tabla": "ediciones", "campo": "fecha_inicio", "valor": "2027-07-16",
+    "fuente_url": "https://observador.pt/2026/07/19/festival-mares-regressa-a-matosinhos-em-2027-de-16-a-18-de-julho/", "motivo": "MEO Marés 2027: 16–18 July in Matosinhos (promoter PEV Entertainment, via Lusa)." },
+  { "festival": "Mares Vivas", "tabla": "ediciones", "campo": "fecha_fin", "valor": "2027-07-18",
+    "fuente_url": "https://observador.pt/2026/07/19/festival-mares-regressa-a-matosinhos-em-2027-de-16-a-18-de-julho/", "motivo": "End date (16–18 July 2027)." },
+
+  { "festival": "Rock in Rio", "tabla": "festivales", "campo": "ciudad", "valor": "Lisboa (Parque Tejo / Parque Papa Francisco)",
+    "fuente_url": "https://www.rtp.pt/noticias/cultura/rock-in-rio-lisboa-regressa-ao-parque-tejo-em-1718-24-e-25-de-junho-de-2028_n1750039", "motivo": "Venue of the 2024 and 2026 editions and of the next one." },
+  { "festival": "Rock in Rio", "tabla": "ediciones", "campo": "fechas_texto", "valor": "No edition in 2027 (next: 17–18 and 24–25 June 2028)",
+    "fuente_url": "https://www.rtp.pt/noticias/cultura/rock-in-rio-lisboa-regressa-ao-parque-tejo-em-1718-24-e-25-de-junho-de-2028_n1750039", "motivo": "Rock in Rio Lisboa is biennial: the 12th edition is on 17, 18, 24 and 25 June 2028. Consider marking 2027 as discarded." },
+
+  { "festival": "North Music Festival", "tabla": "festivales", "campo": "ciudad", "valor": "Maia",
+    "fuente_url": "https://www.sabado.pt/gps/amp/north-festival-muda-se-para-maia-em-2026-e-vai-ter-the-cure-como-cabecas-de-cartaz", "motivo": "North Festival moved to Maia (Cidade Desportiva) in 2026, with The Cure as headliner; previously Alfândega do Porto. 2027 not announced." },
+
+  { "festival": "Avante Festival", "tabla": "festivales", "campo": "ciudad", "valor": "Seixal (Quinta da Atalaia)",
+    "fuente_url": "https://observador.pt/2026/05/21/festa-do-avante-celebra-50-anos-com-carolina-deslandes-ney-matogrosso-antonio-zambujo-e-carlao-no-cartaz/", "motivo": "Festa do Avante! is held every year at Quinta da Atalaia, Seixal (50th edition in 2026)." },
+  { "festival": "Avante Festival", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Early September 2027 (to confirm; 2026: 4–6 Sep)",
+    "fuente_url": "https://www.rtp.pt/noticias/cultura/festa-do-avante-carolina-deslandes-carlao-e-ney-matogrosso-no-cartaz-deste-ano_n1742684", "motivo": "First weekend of September every year (2024: 6–8, 2025: 5–7, 2026: 4–6). 2027 not announced." },
+  { "festival": "Avante Festival", "tabla": "ediciones", "campo": "duracion_dias", "valor": 3,
+    "fuente_url": "https://www.rtp.pt/noticias/cultura/festa-do-avante-carolina-deslandes-carlao-e-ney-matogrosso-no-cartaz-deste-ano_n1742684", "motivo": "Three days (Friday to Sunday)." },
+
+  { "festival": "Guimarães Jazz", "tabla": "festivales", "campo": "ciudad", "valor": "Guimarães",
+    "fuente_url": "https://www.ccvf.pt/en/detail-eventos/20261112-guimaraes-jazz-2026-geral/", "motivo": "Organised by Centro Cultural Vila Flor, Guimarães (mostly indoor venues)." },
+  { "festival": "Guimarães Jazz", "tabla": "festivales", "campo": "generos", "valor": ["jazz"],
+    "fuente_url": "https://www.ccvf.pt/en/detail-eventos/20261112-guimaraes-jazz-2026-geral/", "motivo": "Jazz festival (35th edition in 2026)." },
+  { "festival": "Guimarães Jazz", "tabla": "ediciones", "campo": "fechas_texto", "valor": "Mid-November 2027 (to confirm; 2026: 12–21 Nov)",
+    "fuente_url": "https://www.ccvf.pt/en/detail-eventos/20261112-guimaraes-jazz-2026-geral/", "motivo": "2026: 12–21 November; 2025: 6–15 November. 2027 not announced." },
+
+  { "festival": "OperaFest", "tabla": "festivales", "campo": "ciudad", "valor": "Lisboa and Oeiras",
+    "fuente_url": "https://www.visitlisboa.com/en/events/operafest-lisboa-oeiras-", "motivo": "Venues split between Oeiras (Convento da Cartuxa) and Lisbon (Teatro Camões, Cinemateca, Teatro Romano)." },
+  { "festival": "OperaFest", "tabla": "ediciones", "campo": "fechas_texto", "valor": "August–September 2027 (to confirm; 2026: 5 Aug – 11 Sep)",
+    "fuente_url": "https://lisboasecreta.co/en/operaoperafest-returns-for-its-seventh-edition/", "motivo": "7th edition ran 5 August – 11 September 2026. 2027 not announced." }
+]

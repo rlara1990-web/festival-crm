@@ -1,0 +1,22 @@
+[
+  { "festival": "Andanças", "valor": { "email": "tascos.feira@andancas.net", "rol": "Food stalls, bars and fair (Tascos e Feira)" },
+    "fuente_url": "https://www.andancas.net/site/contactos/", "motivo": "Official contacts page: dedicated address for the festival's food stalls, bars and fair. Best channel for food vendors." },
+  { "festival": "Andanças", "valor": { "email": "info@andancas.net", "rol": "General info" },
+    "fuente_url": "https://www.andancas.net/site/contactos/", "motivo": "General address on the official contacts page (organiser: PédeXumbo)." },
+  { "festival": "Viagem Medieval Santa Maria da Feira", "valor": { "email": "info@viagemmedieval.com", "rol": "General info" },
+    "fuente_url": "https://www.viagemmedieval.com/", "motivo": "General email on the official site. Food vendor and restaurant regulations are published there each year." },
+  { "festival": "Sumol Summer Fest", "valor": { "email": "musicanocoracao@mnc.pt", "nombre": "Música no Coração", "rol": "Promoter" },
+    "fuente_url": "https://www.sumolsummerfest.com/", "motivo": "Promoter contact shown on the official site. Same address as Festival Jardins do Marquês (same promoter): could be linked as an organisation." },
+  { "festival": "Out Jazz", "valor": { "email": "geral@ncs.pt", "nombre": "NCS", "rol": "Producer" },
+    "fuente_url": "https://www.outjazz.pt/", "motivo": "Producer contact shown on the official Out Jazz site." },
+  { "festival": "MotoGP Grande Prémio de Portugal", "valor": { "email": "info@autodromodoalgarve.com", "rol": "Circuit (Autódromo Internacional do Algarve)" },
+    "fuente_url": "https://www.autodromodoalgarve.com/pt/contactos", "motivo": "General email of the circuit that hosts the race (official contacts page). Food concessions are managed by the circuit." },
+  { "festival": "Mercado Medieval de Óbidos", "valor": { "email": "apoio.cliente@cm-obidos.pt", "rol": "Óbidos municipality (organiser)" },
+    "fuente_url": "https://www.mercadomedievalobidos.pt/informacoes/", "motivo": "Contact on the event's official information page; it is the municipality's customer support, so ask to be forwarded to the market's organisation." },
+  { "festival": "Ageas Cooljazz", "valor": { "email": "info@liveexperiences.pt", "nombre": "Live Experiences", "rol": "Promoter" },
+    "fuente_url": "https://liveexperiences.pt/", "motivo": "Live Experiences has produced the festival for 20 years. Email from search results; not visible on the site (loaded dynamically). Secondary source." },
+  { "festival": "Brunch Electronik Lisboa", "valor": { "email": "vecinos@brunchelectronik.com", "rol": "Brunch Electronik (brand contact)" },
+    "fuente_url": "https://barcelona.brunchelectronik.com/contacto/", "motivo": "General contact of the Brunch Electronik brand (Barcelona site); no Lisbon-specific email found." },
+  { "festival": "Sónar Lisboa", "valor": { "email": "sonar@sonar.es", "rol": "Sónar (Advanced Music, Barcelona)" },
+    "fuente_url": "https://sonar.es/en/terms-and-conditons", "motivo": "General Sónar contact (Advanced Music). Sónar Lisboa is co-organised with Pixel Harmony (Porto); no Lisbon-specific email found." }
+]
